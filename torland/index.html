@@ -1,0 +1,33 @@
+<html>
+
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+</head>
+
+<body>
+    <canvas id="canvas" height="10" width="10" style="border: solid red 1px;width: 500px; height: 500px;  image-rendering: pixelated;"></canvas>
+    <button id="update">update</button>
+    <script type="module">
+        import init, { WorldWraper } from '/pkg/torland.js';
+
+        const canvas = document.getElementById("canvas");
+        let world;
+
+        init().then(() => {
+            world = WorldWraper.new();
+            // requestAnimationFrame(onFrame);
+        });
+
+        document.getElementById("update").onclick = function() {
+            world.update()
+            world.draw(canvas.getContext("2d"));
+        }
+
+        function onFrame() {
+            // requestAnimationFrame(onFrame);
+            // world.draw(canvas.getContext("2d"));
+        }
+    </script>
+</body>
+
+</html>

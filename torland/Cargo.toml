@@ -1,0 +1,22 @@
+[package]
+name = "torland"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[dependencies]
+botc = { workspace = true }
+rand = "0.8.5"
+
+[target.'cfg(any(target_arch = "x86", target_arch = "x86_64"))'.dependencies]
+piston = "0.55.0"
+piston2d-graphics = "0.44.0"
+pistoncore-glutin_window = "0.72.0"
+piston2d-opengl_graphics = "0.84.0"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+web-sys = {version = "0.3.72", features = ['ImageData', 'CanvasRenderingContext2d', 'Document', 'Element', 'HtmlCanvasElement', 'Window']}
+wasm-bindgen = "0.2.95"
+getrandom = { version = "0.2", features = ["js"] }

@@ -1,0 +1,6 @@
+[workspace]
+resolver = "1"
+members = ["botc", "torland"]
+
+[workspace.dependencies]
+botc = { path = "botc" }

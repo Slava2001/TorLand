@@ -1,0 +1,105 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+ 
+header {
+    background-color: grey;
+    width: 100vw;
+    height: 10vh;
+}
+
+section {
+    width: 100vw;
+    height: calc(100vh - 10vh - 25px);
+    bottom: 10px;
+    top: 10px;
+    background-color: rgb(87, 87, 87);
+}
+
+footer {
+    background-color: rgb(65, 65, 65);
+    position: absolute;
+    height: 25px;
+    bottom: 0;
+    width: 100vw;
+}
+
+footer .container p {
+    text-align: center;
+    color: gray;
+}
+
+.container {
+    height: 100%;
+    margin-left: 10%;
+    margin-right: 10%;
+    align-content: center;
+}
+
+.github_link {
+    width: fit-content;
+    float: left;
+    height: 50%;
+    border: solid transparent 1px;
+}
+.github_link:hover {
+    border: none;
+}
+.github_link .github_link_img {
+    float: left;
+    height: 100%;
+}
+.github_link .github_link_img img {
+    clip-path: circle();
+    height: 100%;
+    vertical-align: center;
+}
+.github_link .github_link_text {
+    float: right;
+    display: table;
+    height: 100%;
+    text-align: center;
+    padding-left: 10px;
+}
+.github_link .github_link_text p {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.menu {
+    float: right;
+    height: 50%;
+}
+
+.menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.menu ul li {
+    height: 100%;
+    display: inline;
+    float: left;
+    vertical-align: middle;
+    margin-left: 5px;
+}
+
+.menu ul li a {
+    padding: 10px;
+    align-content: center;
+    height: 100%;
+    display: block;
+    background-color: rgb(153, 153, 153);
+    text-decoration: none;
+    font-style:none;
+	text-transform:uppercase;
+    color:black;
+}
+
+.menu ul li a:hover {
+    background-color: rgb(182, 182, 182);
+  }
