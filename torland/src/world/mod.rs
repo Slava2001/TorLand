@@ -1,7 +1,9 @@
 use rand::{seq::SliceRandom, thread_rng};
 use std::{
-    cell::RefCell, mem::swap, sync::{Arc, Mutex}, thread, usize
+    cell::RefCell, mem::swap, sync::{Arc, Mutex}, usize
 };
+#[cfg(feature = "multithread")]
+use std::thread;
 
 mod bot;
 pub use bot::Bot;
@@ -78,17 +80,17 @@ impl World {
         };
         self.current_iter = next_iter;
 
-        // let mut threads = Vec::new();
+        #[cfg(feature = "multithread")]
+        let mut threads = Vec::new();
+
         for ti in 0..self.cfg.thread_cnt {
             let cells = self.cells.clone();
             let jobs = rows_index.clone();
             let is_completed_c = is_completed.clone();
             let first_uncompleted_c = first_uncompleted.clone();
             let in_work_c = in_work.clone();
-
-            web_sys::console::log_1(&format!("spawn {ti}").into());
-            // threads.push(thread::spawn(move || {
-                let thread_id = 0;//ti;
+            let worker = move || {
+                let thread_id = ti;
                 loop {
                     let mut found = false;
                     let mut job = 0;
@@ -175,11 +177,20 @@ impl World {
                         }
                     }
                 }
-            // }));
-            web_sys::console::log_1(&format!("spawn ok{ti}").into());
+            };
 
+            #[cfg(feature = "multithread")]
+            {
+                threads.push(thread::spawn(worker));
+            }
+            #[cfg(not(feature = "multithread"))]
+            {
+                worker();
+                break;
+            }
         }
-        // threads.into_iter().for_each(|th| th.join().unwrap());
+        #[cfg(feature = "multithread")]
+        threads.into_iter().for_each(|th| th.join().unwrap());
     }
 
     pub fn for_each_cell<F>(&self, mut func: F)

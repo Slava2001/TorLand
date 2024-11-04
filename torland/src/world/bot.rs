@@ -1,12 +1,11 @@
-use botc::code::{Command, Dir};
 use super::WordAccessor;
+use botc::code::{Command, Dir};
 
 pub(super) enum Action {
     Ok,
     Die,
-    Mov(Dir)
+    Mov(Dir),
 }
-
 
 #[derive(Debug)]
 struct State {}

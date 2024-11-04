@@ -3,9 +3,9 @@ pub mod world;
 #[cfg(target_arch = "wasm32")]
 use {
     wasm_bindgen::prelude::*,
-    web_sys::CanvasRenderingContext2d
+    web_sys::CanvasRenderingContext2d,
+    world::World
 };
-use {world::World};
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
