@@ -24,7 +24,8 @@ fn main() {
     let world_cfg = WorldConfig {
         h: WORLD_H,
         w: WORLD_W,
-        thread_cnt: 1
+        thread_cnt: 1,
+        code: "".into()
     };
     let mut world = World::new(world_cfg);
 

@@ -1,50 +1,48 @@
 pub mod world;
 
 #[cfg(target_arch = "wasm32")]
-use {
-    wasm_bindgen::prelude::*,
-    web_sys::CanvasRenderingContext2d,
-    world::World
-};
+use {wasm_bindgen::prelude::*, web_sys::CanvasRenderingContext2d, world::World};
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 struct WorldWraper {
-    world: world::World
+    world: world::World,
+    size: usize,
 }
 
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 impl WorldWraper {
-    pub fn new() -> Self {
-        web_sys::console::log_1(&"start...".into());
+    pub fn new(s: usize) -> Self {
         Self {
-            world: World::new(world::WorldConfig { h: 10, w: 10, thread_cnt: 1 }),
+            world: World::new(world::WorldConfig {
+                h: s,
+                w: s,
+                thread_cnt: 1,
+                code: "".into(),
+            }),
+            size: std::cmp::min(s, 100),
         }
     }
 
     pub fn update(&mut self) {
-        web_sys::console::log_1(&"Update...".into());
         self.world.update();
-        web_sys::console::log_1(&"UpdateOK...".into());
     }
-    
+
     pub fn draw(&self, ctx: &CanvasRenderingContext2d) {
-        web_sys::console::log_1(&"draw...".into());
-        
-        let buf = &mut [0; 10*10*4];
+        let buf = &mut [0; 100 * 100 * 4];
         self.world.for_each_cell(|x, y, c| {
             let color = match c {
                 world::Cell::None => [0; 4],
                 world::Cell::Bot(_, _bot) => [0, 255, 0, 255],
             };
-            buf[(y * 10 + x)*4..(y * 10 + x)*4 + 4].copy_from_slice(&color);
+            buf[(y * self.size + x) * 4..(y * self.size + x) * 4 + 4].copy_from_slice(&color);
         });
 
         let data = web_sys::ImageData::new_with_u8_clamped_array_and_sh(
-            wasm_bindgen::Clamped(buf),
-            10,
-            10,
+            wasm_bindgen::Clamped(&buf[..(self.size * self.size * 4)]),
+            self.size as u32,
+            self.size as u32,
         )
         .expect("should create ImageData from array");
 

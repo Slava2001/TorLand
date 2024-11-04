@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>wdrop</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
 </head>
 
 <body>
@@ -21,8 +22,8 @@
 
             <div class="menu">
                 <ul>
-					<li><a href="index.html">Главная</a></li>
-					<li><a href="compiler.html">Компилятор</a></li>
+					<li><a href="index">Главная</a></li>
+					<li><a href="compiler">Компилятор</a></li>
 				</ul>
             </div>
 
@@ -30,8 +31,44 @@
     </header>
     <section>
         <div class="container">
-            <h1>// TODO: Оформить главную страницу XD</h1>
+            <canvas id="canvas" height="10" width="10"></canvas>
+            <div class="controls">
+                <label for="world_size">World size:</label>
+                <input type="number" id="world_size" name="world_size" min="5" max="100" value="10">
+                <label for="bot_code">Bot:</label>
+                <input type="text" id="bot_code" name="bot_code">
+                <button id="run">run</button>
+                <label for="fps">FPS:</label>
+                <input type="number" id="fps" name="fps" min="1" max="100" value="5">
+            </div>
+            
         </div>
+        <script type="module">
+            import init, { WorldWraper } from '/torland/torland.js';
+            init();
+
+            const canvas = document.getElementById("canvas");
+            const world_size = document.getElementById("world_size");
+            const bot_code = document.getElementById("bot_code");
+            const fps = document.getElementById("fps");
+            
+            let world;
+            let timer;
+            function update() {
+                world.update()
+                world.draw(canvas.getContext("2d"));
+                timer = setTimeout(update, 1000/fps.value);
+            }
+            function run() {
+                world = WorldWraper.new(world_size.value);
+                canvas.height = world_size.value;
+                canvas.width = world_size.value;
+                if (!timer) {
+                    update();
+                }
+            }
+            document.getElementById("run").onclick = run;
+        </script>
     </section>
     <footer>
         <div class="container">

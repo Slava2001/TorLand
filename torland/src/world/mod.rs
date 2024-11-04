@@ -25,6 +25,7 @@ pub struct WorldConfig {
     pub h: usize,
     pub w: usize,
     pub thread_cnt: usize,
+    pub code: String
 }
 
 pub struct World {
@@ -48,7 +49,7 @@ impl World {
             }
             cells.push(Mutex::new(row));
         }
-        *cells[3].lock().unwrap()[3].borrow_mut() = Cell::Bot(Iteration::Even, Bot::new());
+        *cells[cfg.h/2].lock().unwrap()[cfg.w/2].borrow_mut() = Cell::Bot(Iteration::Even, Bot::new(cfg.code.clone()));
         Self {
             cells: Arc::new(cells),
             cfg,

@@ -17,7 +17,7 @@ pub struct Bot {
 }
 
 impl Bot {
-    pub(super) fn new() -> Self {
+    pub(super) fn new(_code: String) -> Self {
         Self {
             state: State {},
             genom: Vec::new(),
