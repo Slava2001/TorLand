@@ -1,0 +1,15 @@
+{
+  "name": "torland",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "torland_bg.wasm",
+    "torland.js",
+    "torland.d.ts"
+  ],
+  "main": "torland.js",
+  "types": "torland.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
