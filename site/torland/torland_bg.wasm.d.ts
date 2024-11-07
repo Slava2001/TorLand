@@ -2,7 +2,7 @@
 /* eslint-disable */
 export const memory: WebAssembly.Memory;
 export function __wbg_worldwraper_free(a: number, b: number): void;
-export function worldwraper_new(a: number): number;
+export function worldwraper_new(a: number, b: number, c: number): number;
 export function worldwraper_update(a: number): void;
 export function worldwraper_draw(a: number, b: number): void;
 export function compile(a: number, b: number, c: number): void;

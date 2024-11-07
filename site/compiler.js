@@ -26,8 +26,8 @@ const KEYWORDS = {
         'absorb': [],
         'call': ['Lable'],
         'ret': [],
-        'load': ['Reg', 'Reg'],
-        'loadv': ['RwReg', 'Val']
+        'ld': ['Reg', 'Reg'],
+        'ldv': ['RwReg', 'Val']
     },
     'Dir': {
         'values': ['front', 'frontright', 'right', 'backright', 'back', 'backleft', 'left', 'frontleft'],

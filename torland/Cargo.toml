@@ -16,6 +16,7 @@ features = ["multithread"]
 
 [dependencies]
 botc = { workspace = true }
+num-traits = "0.2.19"
 rand = "0.8.5"
 
 [target.'cfg(any(target_arch = "x86", target_arch = "x86_64"))'.dependencies]

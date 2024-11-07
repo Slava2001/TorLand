@@ -47,7 +47,7 @@ macro_rules! decl_command_enum {
             }
         }
 
-        #[derive(Debug, serde::Serialize, serde::Deserialize)]
+        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
         pub enum Command {
             $($enum_entry$(($($args),*))?),*
         }
@@ -137,6 +137,6 @@ decl_command_enum! {
         ("absorb", Absorb               ),
         ("call",   Call,   Lable        ),
         ("ret",    Ret                  ),
-        ("load",   Load,   RwReg, Reg   ),
-        ("loadv",  Loadv,  RwReg, Val   )
+        ("ld",   Load,   RwReg, Reg   ),
+        ("ldv",  Loadv,  RwReg, Val   )
 }

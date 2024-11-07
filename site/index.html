@@ -22,7 +22,7 @@
 
             <div class="menu">
                 <ul>
-					<li><a href="index">Главная</a></li>
+					<li><a href="/">Главная</a></li>
 					<li><a href="compiler">Компилятор</a></li>
 				</ul>
             </div>
@@ -60,7 +60,7 @@
                 timer = setTimeout(update, 1000/fps.value);
             }
             function run() {
-                world = WorldWraper.new(world_size.value);
+                world = WorldWraper.new(world_size.value, bot_code.value);
                 canvas.height = world_size.value;
                 canvas.width = world_size.value;
                 if (!timer) {

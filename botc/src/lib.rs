@@ -5,7 +5,7 @@ pub(crate) mod token;
 
 macro_rules! decl_tokens_enum {
     ($enum_name:ident, $(($str_name:literal, $enum_entry:ident)),*) => {
-        #[derive(Debug, serde::Serialize, serde::Deserialize)]
+        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Copy)]
         pub enum $enum_name {
             $($enum_entry),*
         }

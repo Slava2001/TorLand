@@ -14,9 +14,10 @@ export class WorldWraper {
   free(): void;
   /**
    * @param {number} s
+   * @param {string} bot
    * @returns {WorldWraper}
    */
-  static new(s: number): WorldWraper;
+  static new(s: number, bot: string): WorldWraper;
   update(): void;
   /**
    * @param {CanvasRenderingContext2D} ctx
@@ -29,7 +30,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_worldwraper_free: (a: number, b: number) => void;
-  readonly worldwraper_new: (a: number) => number;
+  readonly worldwraper_new: (a: number, b: number, c: number) => number;
   readonly worldwraper_update: (a: number) => void;
   readonly worldwraper_draw: (a: number, b: number) => void;
   readonly compile: (a: number, b: number, c: number) => void;

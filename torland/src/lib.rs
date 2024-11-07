@@ -1,4 +1,5 @@
 pub mod world;
+mod vec2;
 
 #[cfg(target_arch = "wasm32")]
 use {wasm_bindgen::prelude::*, web_sys::CanvasRenderingContext2d, world::World};
@@ -13,16 +14,16 @@ struct WorldWraper {
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 impl WorldWraper {
-    pub fn new(s: usize) -> Self {
-        Self {
+    pub fn new(sise: usize, bot: &str) -> Self {
+        let mut ww = Self {
             world: World::new(world::WorldConfig {
-                h: s,
-                w: s,
-                thread_cnt: 1,
-                code: "".into(),
+                h: sise,
+                w: sise
             }),
             size: std::cmp::min(s, 100),
-        }
+        };
+        ww.world.spawn((s/2, s/2).into(), bot.into()).ok();
+        ww
     }
 
     pub fn update(&mut self) {
@@ -31,11 +32,8 @@ impl WorldWraper {
 
     pub fn draw(&self, ctx: &CanvasRenderingContext2d) {
         let buf = &mut [0; 100 * 100 * 4];
-        self.world.for_each_cell(|x, y, c| {
-            let color = match c {
-                world::Cell::None => [0; 4],
-                world::Cell::Bot(_, _bot) => [0, 255, 0, 255],
-            };
+        self.world.foreach_bot(|x, y, _| {
+            let color = [0, 255, 0, 255];
             buf[(y * self.size + x) * 4..(y * self.size + x) * 4 + 4].copy_from_slice(&color);
         });
 

@@ -14,7 +14,7 @@ const WORLD_H: usize = 10;
 const WORLD_W: usize = 10;
 
 fn main() {
-    let mut window: Window = WindowSettings::new("TorLand", [WINDOW_H-20.0, WINDOW_W-20.0])
+    let mut window: Window = WindowSettings::new("TorLand", [WINDOW_H, WINDOW_W])
         .graphics_api(OpenGL::V3_2)
         .exit_on_esc(true)
         .build()
@@ -24,8 +24,6 @@ fn main() {
     let world_cfg = WorldConfig {
         h: WORLD_H,
         w: WORLD_W,
-        thread_cnt: 1,
-        code: "".into()
     };
     let mut world = World::new(world_cfg);
 
@@ -41,19 +39,10 @@ fn main() {
                 clear([1.0; 4], g);
                 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
                 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
-                world.for_each_cell(|x, y, cell| {
-                    let rect = [
-                        X_STEP * x as f64,
-                        Y_STEP * y as f64,
-                        X_STEP,
-                        Y_STEP,
-                    ];
-                    let color = match cell {
-                        torland::world::Cell::None => [0.0; 4],
-                        torland::world::Cell::Bot(_, _bot) => [0.0, 1.0, 0.0, 1.0],
-                    };
-                    Rectangle::new(color)
-                        .draw(rect, &Default::default(), c.transform, g);
+                world.foreach_bot(|x, y, _cell| {
+                    let rect = [X_STEP * x as f64, Y_STEP * y as f64, X_STEP, Y_STEP];
+                    let color = [0.0, 1.0, 0.0, 1.0];
+                    Rectangle::new(color).draw(rect, &Default::default(), c.transform, g);
                 });
                 draw_cursor(&cursor_pos, c, g);
             });
@@ -87,7 +76,17 @@ fn main() {
             }
 
             if let Button::Mouse(MouseButton::Left) = args {
-                eprintln!("No Cell");
+                const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
+                const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
+                world
+                    .spawn(
+                        (
+                            (cursor_pos[0] / X_STEP) as usize,
+                            (cursor_pos[1] / Y_STEP) as usize,
+                        ).into(),
+                        "MNTIAACGFDGQIZJTGMQAAAA".into(),
+                    )
+                    .ok();
             }
         }
     }
@@ -98,7 +97,7 @@ fn draw_cursor(cursor_pos: &[f64; 2], c: Context, g: &mut GlGraphics) {
     const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
     let rect = [
         X_STEP * (cursor_pos[0] / X_STEP).floor(),
-        Y_STEP * (cursor_pos[1] / X_STEP).floor(),
+        Y_STEP * (cursor_pos[1] / Y_STEP).floor(),
         X_STEP,
         Y_STEP,
     ];

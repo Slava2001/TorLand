@@ -12,6 +12,14 @@ macro_rules! decl_reg {
             RwReg,
             $(($rw_reg_name, $rw_reg)),*
         }
+
+        impl From<RwReg> for Reg {
+            fn from(value: RwReg) -> Self {
+                match value {
+                    $(RwReg::$rw_reg => Reg::$rw_reg),*
+                }
+            }
+        }
     };
 }
 
