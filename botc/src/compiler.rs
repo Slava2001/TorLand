@@ -35,8 +35,8 @@ pub fn decompile(code: Vec<Command>) -> Vec<String> {
             res
         })
         .collect();
-    req_lables.dedup_by(|(i1, _), (i2, _)| i1 == i2);
     req_lables.sort_by(|(i1, _), (i2, _)| i2.cmp(i1));
+    req_lables.dedup_by(|(i1, _), (i2, _)| i1 == i2);
     for (i, l) in req_lables {
         res.insert(i, l);
     }
