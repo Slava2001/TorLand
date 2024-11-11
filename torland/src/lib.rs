@@ -20,14 +20,14 @@ impl WorldWraper {
                 h: sise,
                 w: sise
             }),
-            size: std::cmp::min(s, 100),
+            size: std::cmp::min(sise, 100),
         };
-        ww.world.spawn((s/2, s/2).into(), bot.into()).ok();
+        ww.world.spawn((sise/2, sise/2).into(), bot.into()).ok();
         ww
     }
 
     pub fn update(&mut self) {
-        self.world.update();
+        self.world.update().ok();
     }
 
     pub fn draw(&self, ctx: &CanvasRenderingContext2d) {

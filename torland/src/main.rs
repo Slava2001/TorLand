@@ -50,7 +50,7 @@ fn main() {
 
         if let Some(_) = e.update_args() {
             if !pause {
-                world.update();
+                world.update().ok();
                 if by_step {
                     pause = true;
                 }
@@ -84,7 +84,21 @@ fn main() {
                             (cursor_pos[0] / X_STEP) as usize,
                             (cursor_pos[1] / Y_STEP) as usize,
                         ).into(),
-                        "MNTIAACGFDGQIZJTGMQAAAA".into(),
+                        botc::code_packer::to_b32(
+                            &botc::compiler::compile(
+                                r#"
+                                start:
+                                    eatsun
+                                    cmpv EN 1100
+                                    jge lets_forc
+                                    jmp start
+
+                                lets_forc:
+                                    forc front start
+                                    jmp start
+                                "#.into()
+                            ).unwrap()
+                        ).unwrap(),
                     )
                     .ok();
             }

@@ -15,7 +15,10 @@ pub struct Vec2<T> {
 
 impl<T: Clone> Clone for Vec2<T> {
     fn clone(&self) -> Self {
-        Self { x: self.x.clone(), y: self.y.clone() }
+        Self {
+            x: self.x.clone(),
+            y: self.y.clone(),
+        }
     }
 }
 
@@ -48,15 +51,16 @@ impl<T, U: Into<T>> From<(U, U)> for Vec2<T> {
 impl<T: From<isize>> From<Dir> for Vec2<T> {
     fn from(value: Dir) -> Self {
         match value {
-            Dir::Front => (0, 1),
-            Dir::FrontRight => (1, 1),
+            Dir::Front => (0, -1),
+            Dir::FrontRight => (1, -1),
             Dir::Right => (1, 0),
-            Dir::BackRight => (1, -1),
-            Dir::Back => (0, -1),
-            Dir::BackLeft => (-1, -1),
+            Dir::BackRight => (1, 1),
+            Dir::Back => (0, 1),
+            Dir::BackLeft => (-1, 1),
             Dir::Left => (-1, 0),
-            Dir::FrontLeft => (-1, 1),
-        }.into()
+            Dir::FrontLeft => (-1, -1),
+        }
+        .into()
     }
 }
 
