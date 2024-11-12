@@ -5,10 +5,11 @@ pub(crate) mod token;
 
 macro_rules! decl_tokens_enum {
     ($enum_name:ident, $(($str_name:literal, $enum_entry:ident)),*) => {
-        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Copy)]
+        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Copy, num_derive::FromPrimitive)]
         pub enum $enum_name {
             $($enum_entry),*
         }
+
         impl crate::token::FromTokenStream for $enum_name {
             fn from_toks(toks: &mut crate::token::TokenStream) -> anyhow::Result<$enum_name> {
                 let (cmd_tok, _) = toks.next()?;
@@ -18,11 +19,28 @@ macro_rules! decl_tokens_enum {
                 })
             }
         }
+
         impl std::fmt::Display for $enum_name {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match *self {
                     $($enum_name::$enum_entry => write!(f, $str_name)),*,
                 }
+            }
+        }
+        
+        impl rand::prelude::Distribution<$enum_name> for rand::distributions::Standard {
+            fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> $enum_name {
+                const ENUM_VARIANT_COUNTL: usize = [
+                    $($enum_name::$enum_entry),*
+                ].len();
+                let i = rng.gen_range(0..ENUM_VARIANT_COUNTL);
+                num_traits::FromPrimitive::from_usize(i).unwrap()
+            }
+        }
+        
+        impl std::default::Default for $enum_name {
+            fn default() -> Self {
+                num_traits::FromPrimitive::from_usize(0).unwrap()
             }
         }
     };

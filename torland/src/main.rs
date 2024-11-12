@@ -6,6 +6,10 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::RenderEvent;
 use piston::window::WindowSettings;
 use piston::{Button, Key, MouseButton, MouseCursorEvent, PressEvent, UpdateEvent};
+use rand::{thread_rng, Rng};
+use std::collections::HashMap;
+
+use botc::code::Command;
 use torland::world::{World, WorldConfig};
 
 const WINDOW_H: f64 = 400.0;
@@ -33,16 +37,32 @@ fn main() {
 
     let event_settings = EventSettings::new();
     let mut events = Events::new(event_settings);
+
+    let mut colors: HashMap<usize, [f32; 4]> = HashMap::new();
+
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
             gl.draw(args.viewport(), |c, g| {
                 clear([1.0; 4], g);
                 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
                 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
-                world.foreach_bot(|x, y, _cell| {
+                world.foreach_bot(|x, y, bot| {
                     let rect = [X_STEP * x as f64, Y_STEP * y as f64, X_STEP, Y_STEP];
-                    let color = [0.0, 1.0, 0.0, 1.0];
-                    Rectangle::new(color).draw(rect, &Default::default(), c.transform, g);
+                    let colony = bot.get_colony();
+                    let color = if colors.get(&colony).is_some() {
+                        colors.get(&colony)
+                    } else {
+                        let rand_color = [
+                            thread_rng().gen_range(0..100) as f32 / 100.0,
+                            thread_rng().gen_range(0..100) as f32 / 100.0,
+                            thread_rng().gen_range(0..100) as f32 / 100.0,
+                            1.0,
+                        ];
+                        colors.insert(colony, rand_color);
+                        colors.get(&colony)
+                    }
+                    .unwrap();
+                    Rectangle::new(*color).draw(rect, &Default::default(), c.transform, g);
                 });
                 draw_cursor(&cursor_pos, c, g);
             });
@@ -83,22 +103,20 @@ fn main() {
                         (
                             (cursor_pos[0] / X_STEP) as usize,
                             (cursor_pos[1] / Y_STEP) as usize,
-                        ).into(),
+                        )
+                            .into(),
                         botc::code_packer::to_b32(
                             &botc::compiler::compile(
-                                r#"
-                                start:
-                                    eatsun
-                                    cmpv EN 1100
-                                    jge lets_forc
-                                    jmp start
-
-                                lets_forc:
-                                    forc front start
-                                    jmp start
-                                "#.into()
-                            ).unwrap()
-                        ).unwrap(),
+                            r#"
+                            start:
+                                eatsun
+                                cmpv EN 1500
+                                jle start
+                                forc front start
+                            "#.into())
+                            .unwrap(),
+                        )
+                        .unwrap(),
                     )
                     .ok();
             }

@@ -1,5 +1,6 @@
 use super::WordAccessor;
 use botc::code::{Command, Dir, Reg, Val};
+use rand::{seq::index, thread_rng, Rng};
 
 struct Rules {
     max_commands_per_cycle: usize,
@@ -9,18 +10,24 @@ struct Rules {
     energy_per_step: isize,
     age_per_energy_penalty: isize,
     start_energy: isize,
-    on_bite_energy_delimiter: isize
+    max_energy: isize,
+    on_bite_energy_delimiter: isize,
+    max_randov_value: isize,
+    mutation_ver: f64
 }
 
 const RULES: Rules = Rules {
     max_commands_per_cycle: 10,
-    energy_for_split: 100,
-    energy_per_sun: 10,
-    energy_per_mineral: 10,
+    energy_for_split: 1000,
+    energy_per_sun: 3,
+    energy_per_mineral: 3,
     energy_per_step: 10,
-    age_per_energy_penalty: 100,
-    start_energy: 1000,
-    on_bite_energy_delimiter: 10
+    age_per_energy_penalty: 1000,
+    start_energy: 100,
+    on_bite_energy_delimiter: 10,
+    max_energy: 10_000,
+    max_randov_value: 1000,
+    mutation_ver: 0.1
 };
 
 const REG_CNT: usize = 8;
@@ -88,7 +95,6 @@ impl Bot {
         if *self.state.get_reg(&Reg::En) == 0 {
             *self.state.get_reg(&Reg::En) = rules.start_energy;
         }
-
 
         for _ in 0..rules.max_commands_per_cycle {
             let cmd = &self.genom[self.state.pc];
@@ -206,14 +212,18 @@ impl Bot {
                         new.state = self.state.clone();
                         new.state.pc = *lable;
                         new.colony = wa.get_new_colony_id();
-                        // TODO mutation
+                        if thread_rng().gen_bool(rules.mutation_ver) {
+                            let index = new.genom.len();
+                            new.genom[thread_rng().gen_range(0..index)] = Command::rand(&mut thread_rng(), new.genom.len(), rules.max_randov_value);
+                        }
                         wa.spawn(dir + self.state.dir, new).ok();
                     }
                     break;
                 }
                 Command::Bite(dir) => {
                     let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg(&Reg::En) = energy + wa.kill(*dir).unwrap_or(0) / rules.on_bite_energy_delimiter;
+                    *self.state.get_reg(&Reg::En) =
+                        energy + wa.kill(*dir).unwrap_or(0) / rules.on_bite_energy_delimiter;
                     break;
                 }
                 Command::Eatsun => {
@@ -223,20 +233,21 @@ impl Bot {
                 }
                 Command::Absorb => {
                     let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg(&Reg::En) = energy + wa.get_mineral() * rules.energy_per_mineral;
+                    *self.state.get_reg(&Reg::En) =
+                        energy + wa.get_mineral() * rules.energy_per_mineral;
                     break;
                 }
                 Command::Call(_) => {
-                    todo!();
+                    // todo!();
                 }
                 Command::Ret => {
-                    todo!();
+                    // todo!();
                 }
-                Command::Load(rw_reg, reg) => {
+                Command::Ld(rw_reg, reg) => {
                     let val = *self.state.get_reg(reg);
                     *self.state.get_reg(&(*rw_reg).into()) = val;
                 }
-                Command::Loadv(rw_reg, val) => {
+                Command::Ldv(rw_reg, val) => {
                     *self.state.get_reg(&(*rw_reg).into()) = *val;
                 }
             };
@@ -245,9 +256,10 @@ impl Bot {
         let age = *self.state.get_reg(&Reg::Ag) + 1;
         *self.state.get_reg(&Reg::Ag) = age;
 
-        let energy = *self.state.get_reg(&Reg::En)
+        let energy = (*self.state.get_reg(&Reg::En)
             - rules.energy_per_step
-            - age / rules.age_per_energy_penalty;
+            - age / rules.age_per_energy_penalty)
+            % rules.max_energy;
         *self.state.get_reg(&Reg::En) = energy;
 
         self.is_live = energy > 0;

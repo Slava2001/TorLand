@@ -77,6 +77,34 @@ macro_rules! decl_command_enum {
                 Err(anyhow::Error::msg("Failed to convert Command to Expr"))
             }
         }
+
+        impl Command {
+            pub fn rand<R: rand::Rng + ?Sized>(rng: &mut R, len: usize, max_val: isize) -> Command {
+                let cmd: CommandWord = rng.gen();
+                Command::try_from(
+                    match cmd {
+                        $(
+                            CommandWord::$enum_entry => {
+                                #[allow(unused_mut)]
+                                let mut args: Vec<CommandArg> = Vec::new();
+                                $($(args.push({
+                                    let arg = CommandArg::$args(rng.gen());
+                                    match arg {
+                                        CommandArg::Lable(l) => CommandArg::Lable(l % len),
+                                        CommandArg::Val(v) => CommandArg::Val(v % max_val),
+                                        arg => arg
+                                    }
+                                });)*)*
+                                Expr {
+                                    cmd: CommandWord::$enum_entry,
+                                    args
+                                }
+                            }
+                        )*
+                    }
+                ).unwrap()
+            }
+        }
     };
 }
 
@@ -137,6 +165,6 @@ decl_command_enum! {
         ("absorb", Absorb               ),
         ("call",   Call,   Lable        ),
         ("ret",    Ret                  ),
-        ("ld",   Load,   RwReg, Reg   ),
-        ("ldv",  Loadv,  RwReg, Val   )
+        ("ld",     Ld,     RwReg, Reg   ),
+        ("ldv",    Ldv,    RwReg, Val   )
 }
