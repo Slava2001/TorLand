@@ -14,15 +14,18 @@ struct WorldWraper {
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 impl WorldWraper {
-    pub fn new(sise: usize, bot: &str) -> Self {
+    pub fn new(size: usize, bot: &str) -> Self {
         let mut ww = Self {
             world: World::new(world::WorldConfig {
-                h: sise,
-                w: sise
+                h: size,
+                w: size,
+                rules: world::Rules::default(),
+                sun: |_, y| 10 - 10 * y / size,
+                mineral: |_, y| 10 - 10 * y / size
             }),
-            size: std::cmp::min(sise, 100),
+            size: std::cmp::min(size, 100),
         };
-        ww.world.spawn((sise/2, sise/2).into(), bot.into()).ok();
+        ww.world.spawn((size/2, size/2).into(), bot.into()).ok();
         ww
     }
 

@@ -1,34 +1,6 @@
-use super::WordAccessor;
+use super::{Rules, WordAccessor};
 use botc::code::{Command, Dir, Reg, Val};
-use rand::{seq::index, thread_rng, Rng};
-
-struct Rules {
-    max_commands_per_cycle: usize,
-    energy_for_split: isize,
-    energy_per_sun: isize,
-    energy_per_mineral: isize,
-    energy_per_step: isize,
-    age_per_energy_penalty: isize,
-    start_energy: isize,
-    max_energy: isize,
-    on_bite_energy_delimiter: isize,
-    max_randov_value: isize,
-    mutation_ver: f64
-}
-
-const RULES: Rules = Rules {
-    max_commands_per_cycle: 10,
-    energy_for_split: 1000,
-    energy_per_sun: 3,
-    energy_per_mineral: 3,
-    energy_per_step: 10,
-    age_per_energy_penalty: 1000,
-    start_energy: 100,
-    on_bite_energy_delimiter: 10,
-    max_energy: 10_000,
-    max_randov_value: 1000,
-    mutation_ver: 0.1
-};
+use rand::{thread_rng, Rng};
 
 const REG_CNT: usize = 8;
 #[derive(Debug, Clone)]
@@ -87,8 +59,7 @@ impl Bot {
         }
     }
 
-    pub(super) fn update(&mut self, wa: &mut WordAccessor) -> Result<(), ()> {
-        let rules = &RULES;
+    pub(super) fn update(&mut self, wa: &mut WordAccessor, rules: &Rules) -> Result<(), ()> {
         if !self.is_live {
             return Ok(());
         }
@@ -171,9 +142,10 @@ impl Bot {
                     }
                 }
                 Command::Chk(dir) => {
-                    *self.state.get_reg(&Reg::Sd) = wa.get_sun_diff(*dir);
-                    *self.state.get_reg(&Reg::Md) = wa.get_mineral_diff(*dir);
-                    let (ef, ec) = match wa.is_some_colony(*dir, self.colony) {
+                    let dir = *dir + self.state.dir;
+                    *self.state.get_reg(&Reg::Sd) = wa.get_sun_diff(dir);
+                    *self.state.get_reg(&Reg::Md) = wa.get_mineral_diff(dir);
+                    let (ef, ec) = match wa.is_some_colony(dir, self.colony) {
                         Some(is_some) => (false, is_some),
                         None => (true, false),
                     };
@@ -200,6 +172,7 @@ impl Bot {
                         let mut new = Bot::new(self.colony, self.genom.clone());
                         new.state = self.state.clone();
                         new.state.pc = *lable;
+                        *new.state.get_reg(&Reg::Ag) = 0;
                         wa.spawn(dir + self.state.dir, new).ok();
                     }
                     break;
@@ -211,6 +184,7 @@ impl Bot {
                         let mut new = Bot::new(self.colony, self.genom.clone());
                         new.state = self.state.clone();
                         new.state.pc = *lable;
+                        *new.state.get_reg(&Reg::Ag) = 0;
                         new.colony = wa.get_new_colony_id();
                         if thread_rng().gen_bool(rules.mutation_ver) {
                             let index = new.genom.len();

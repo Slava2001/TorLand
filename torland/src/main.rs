@@ -6,16 +6,12 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::RenderEvent;
 use piston::window::WindowSettings;
 use piston::{Button, Key, MouseButton, MouseCursorEvent, PressEvent, UpdateEvent};
-use rand::{thread_rng, Rng};
-use std::collections::HashMap;
-
-use botc::code::Command;
-use torland::world::{World, WorldConfig};
+use torland::world::{Rules, World, WorldConfig};
 
 const WINDOW_H: f64 = 400.0;
 const WINDOW_W: f64 = 400.0;
-const WORLD_H: usize = 10;
-const WORLD_W: usize = 10;
+const WORLD_H: usize = 200;
+const WORLD_W: usize = 200;
 
 fn main() {
     let mut window: Window = WindowSettings::new("TorLand", [WINDOW_H, WINDOW_W])
@@ -28,6 +24,9 @@ fn main() {
     let world_cfg = WorldConfig {
         h: WORLD_H,
         w: WORLD_W,
+        rules: Rules::default(),
+        sun: |_, y| 10 - 10 * y / WORLD_H,
+        mineral: |_, y| 10 * y / WORLD_H
     };
     let mut world = World::new(world_cfg);
 
@@ -38,31 +37,21 @@ fn main() {
     let event_settings = EventSettings::new();
     let mut events = Events::new(event_settings);
 
-    let mut colors: HashMap<usize, [f32; 4]> = HashMap::new();
-
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
             gl.draw(args.viewport(), |c, g| {
                 clear([1.0; 4], g);
                 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
                 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
-                world.foreach_bot(|x, y, bot| {
+                world.foreach_cell(|x, y, cell| {
                     let rect = [X_STEP * x as f64, Y_STEP * y as f64, X_STEP, Y_STEP];
-                    let colony = bot.get_colony();
-                    let color = if colors.get(&colony).is_some() {
-                        colors.get(&colony)
+
+                    let color = if cell.bot.is_some() {
+                        [0.0, 0.0, 0.0, 1.0]
                     } else {
-                        let rand_color = [
-                            thread_rng().gen_range(0..100) as f32 / 100.0,
-                            thread_rng().gen_range(0..100) as f32 / 100.0,
-                            thread_rng().gen_range(0..100) as f32 / 100.0,
-                            1.0,
-                        ];
-                        colors.insert(colony, rand_color);
-                        colors.get(&colony)
-                    }
-                    .unwrap();
-                    Rectangle::new(*color).draw(rect, &Default::default(), c.transform, g);
+                        [cell.sun as f32/10.0, cell.sun as f32/10.0, cell.mineral as f32/10.0, 1.0]
+                    };
+                    Rectangle::new(color).draw(rect, &Default::default(), c.transform, g);
                 });
                 draw_cursor(&cursor_pos, c, g);
             });
@@ -109,10 +98,44 @@ fn main() {
                             &botc::compiler::compile(
                             r#"
                             start:
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
                                 eatsun
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
                                 cmpv EN 1500
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
                                 jle start
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
                                 forc front start
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                ret
+                                rot right
                             "#.into())
                             .unwrap(),
                         )

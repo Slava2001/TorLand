@@ -3,16 +3,12 @@ name = "torland"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-multithread = []
-
 [lib]
 crate-type = ["cdylib", "lib"]
 
 [[bin]]
-name = "torland"
+name = "torlandbin"
 path = "src/main.rs"
-features = ["multithread"]
 
 [dependencies]
 botc = { workspace = true }

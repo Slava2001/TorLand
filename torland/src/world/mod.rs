@@ -16,14 +16,49 @@ type BotRef = Rc<RefCell<Bot>>;
 
 #[derive(Debug)]
 pub struct Cell {
-    sun: usize,
-    mineral: usize,
-    bot: Option<BotRef>,
+    pub sun: usize,
+    pub mineral: usize,
+    pub bot: Option<BotRef>,
 }
 
-pub struct WorldConfig {
+pub struct Rules {
+    pub max_commands_per_cycle: usize,
+    pub energy_for_split: isize,
+    pub energy_per_sun: isize,
+    pub energy_per_mineral: isize,
+    pub energy_per_step: isize,
+    pub age_per_energy_penalty: isize,
+    pub start_energy: isize,
+    pub max_energy: isize,
+    pub on_bite_energy_delimiter: isize,
+    pub max_randov_value: isize,
+    pub mutation_ver: f64
+}
+
+impl Default for Rules {
+    fn default() -> Self {
+        Rules {
+            max_commands_per_cycle: 10,
+            energy_for_split: 1000,
+            energy_per_sun: 3,
+            energy_per_mineral: 3,
+            energy_per_step: 10,
+            age_per_energy_penalty: 1000,
+            start_energy: 100,
+            on_bite_energy_delimiter: 10,
+            max_energy: 10_000,
+            max_randov_value: 1000,
+            mutation_ver: 0.1
+        }
+    }
+}
+
+pub struct WorldConfig<T: FnMut(usize, usize)-> usize, U: FnMut(usize, usize)-> usize> {
     pub h: usize,
     pub w: usize,
+    pub rules: Rules,
+    pub sun: T,
+    pub mineral: U
 }
 
 pub struct World {
@@ -31,6 +66,7 @@ pub struct World {
     map: Vec<Vec<Cell>>,
     bots: Vec<(Vec2u, BotRef)>,
     colony_cnt: usize,
+    rules: Rules
 }
 
 struct WordAccessor<'a> {
@@ -109,14 +145,14 @@ impl<'a> WordAccessor<'_> {
 }
 
 impl World {
-    pub fn new(cfg: WorldConfig) -> Self {
+    pub fn new<T: FnMut(usize, usize)->usize, U: FnMut(usize, usize)->usize>(mut cfg: WorldConfig<T, U>) -> Self {
         let mut map = Vec::new();
-        for _ in 0..cfg.h {
+        for y in 0..cfg.h {
             let mut row = Vec::new();
-            for _ in 0..cfg.w {
+            for x in 0..cfg.w {
                 row.push(Cell {
-                    sun: 5,
-                    mineral: 0,
+                    sun: (cfg.sun)(x, y),
+                    mineral: (cfg.mineral)(x, y),
                     bot: None,
                 });
             }
@@ -127,6 +163,7 @@ impl World {
             map,
             bots: Vec::new(),
             colony_cnt: 0,
+            rules: cfg.rules
         }
     }
 
@@ -140,7 +177,7 @@ impl World {
                 map: &mut self.map,
                 colony_cnt: &mut self.colony_cnt,
             };
-            RefCell::borrow_mut(Rc::borrow(b)).update(&mut wa)?;
+            RefCell::borrow_mut(Rc::borrow(b)).update(&mut wa, &self.rules)?;
         }
         self.bots.append(&mut newborn);
         self.bots.retain(|(pos, bot)| {

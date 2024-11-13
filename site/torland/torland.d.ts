@@ -13,11 +13,11 @@ export function decompile(input: string): string;
 export class WorldWraper {
   free(): void;
   /**
-   * @param {number} sise
+   * @param {number} size
    * @param {string} bot
    * @returns {WorldWraper}
    */
-  static new(sise: number, bot: string): WorldWraper;
+  static new(size: number, bot: string): WorldWraper;
   update(): void;
   /**
    * @param {CanvasRenderingContext2D} ctx
