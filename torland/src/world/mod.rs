@@ -41,7 +41,7 @@ impl Default for Rules {
             max_commands_per_cycle: 10,
             energy_for_split: 1000,
             energy_per_sun: 3,
-            energy_per_mineral: 3,
+            energy_per_mineral: 6,
             energy_per_step: 10,
             age_per_energy_penalty: 1000,
             start_energy: 100,

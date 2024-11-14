@@ -1,17 +1,22 @@
 use glutin_window::GlutinWindow as Window;
 use graphics::rectangle::Border;
-use graphics::{clear, Context, Rectangle};
-use opengl_graphics::{GlGraphics, OpenGL};
+use graphics::{clear, Context, DrawState, Image, Rectangle};
+use opengl_graphics::{CreateTexture, Format, GlGraphics, OpenGL, TextureSettings};
 use piston::event_loop::{EventSettings, Events};
 use piston::input::RenderEvent;
 use piston::window::WindowSettings;
 use piston::{Button, Key, MouseButton, MouseCursorEvent, PressEvent, UpdateEvent};
+use rand::{thread_rng, Rng};
+use torland::vec2::Vec2u;
+use torland::voronoi::Voronoi;
 use torland::world::{Rules, World, WorldConfig};
 
-const WINDOW_H: f64 = 400.0;
-const WINDOW_W: f64 = 400.0;
-const WORLD_H: usize = 200;
-const WORLD_W: usize = 200;
+const WINDOW_H: f64 = 800.0;
+const WINDOW_W: f64 = 800.0;
+const WORLD_H: usize = 400;
+const WORLD_W: usize = 400;
+const CLUSTER_CNT: usize = 50;
+const SUN_MAX_LVL: usize = 10;
 
 fn main() {
     let mut window: Window = WindowSettings::new("TorLand", [WINDOW_H, WINDOW_W])
@@ -21,12 +26,21 @@ fn main() {
         .unwrap();
     let mut gl = GlGraphics::new(OpenGL::V3_2);
 
+    let mut colors = Vec::<Vec2u>::new();
+    for _ in 0..CLUSTER_CNT {
+        let sun = thread_rng().gen_range(0..SUN_MAX_LVL) as usize;
+        colors.push((sun, SUN_MAX_LVL - sun + thread_rng().gen_range(0..2)).into());
+    }
+    colors.push((0usize, 0).into());
+
+    let voron = Voronoi::new(&mut thread_rng(), WORLD_H, WORLD_W, CLUSTER_CNT);
+
     let world_cfg = WorldConfig {
         h: WORLD_H,
         w: WORLD_W,
         rules: Rules::default(),
-        sun: |_, y| 10 - 10 * y / WORLD_H,
-        mineral: |_, y| 10 * y / WORLD_H
+        sun: |x, y| colors[voron.get(x, y)].x,
+        mineral: |x, y| colors[voron.get(x, y)].y,
     };
     let mut world = World::new(world_cfg);
 
@@ -37,20 +51,40 @@ fn main() {
     let event_settings = EventSettings::new();
     let mut events = Events::new(event_settings);
 
+    let mut background_texture_bytes = [0u8; WORLD_H*WORLD_W*4/*rgba - 4 bytes*/];
+    world.foreach_cell(|x, y, cell| {
+        let color = [
+            (cell.sun * 255 / SUN_MAX_LVL) as u8,
+            (cell.sun * 255 / SUN_MAX_LVL) as u8,
+            (cell.mineral * 255 / SUN_MAX_LVL) as u8,
+            255u8,
+        ];
+        background_texture_bytes[(y * WORLD_W + x) * 4..(y * WORLD_W + x + 1) * 4]
+            .copy_from_slice(&color);
+    });
+    let backgrount_settings = TextureSettings::new().filter(opengl_graphics::Filter::Nearest);
+    let background_texture = CreateTexture::create(
+        &mut (),
+        Format::Rgba8,
+        &background_texture_bytes,
+        [WORLD_W as u32, WORLD_H as u32],
+        &backgrount_settings,
+    )
+    .unwrap();
+    let background_img = Image::new()
+        .src_rect([0.0, 0.0, WORLD_W as f64, WORLD_H as f64])
+        .rect([0.0, 0.0, WINDOW_W, WINDOW_H]);
+
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
             gl.draw(args.viewport(), |c, g| {
                 clear([1.0; 4], g);
+                background_img.draw(&background_texture, &DrawState::default(), c.transform, g);
                 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
                 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
-                world.foreach_cell(|x, y, cell| {
+                world.foreach_bot(|x, y, _| {
                     let rect = [X_STEP * x as f64, Y_STEP * y as f64, X_STEP, Y_STEP];
-
-                    let color = if cell.bot.is_some() {
-                        [0.0, 0.0, 0.0, 1.0]
-                    } else {
-                        [cell.sun as f32/10.0, cell.sun as f32/10.0, cell.mineral as f32/10.0, 1.0]
-                    };
+                    let color = [0.0, 0.0, 0.0, 1.0];
                     Rectangle::new(color).draw(rect, &Default::default(), c.transform, g);
                 });
                 draw_cursor(&cursor_pos, c, g);
@@ -94,52 +128,7 @@ fn main() {
                             (cursor_pos[1] / Y_STEP) as usize,
                         )
                             .into(),
-                        botc::code_packer::to_b32(
-                            &botc::compiler::compile(
-                            r#"
-                            start:
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                eatsun
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                cmpv EN 1500
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                jle start
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                forc front start
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                ret
-                                rot right
-                            "#.into())
-                            .unwrap(),
-                        )
-                        .unwrap(),
+                        "RXF4CCIAEAGEHUJAPILEJBBM4D7AGOMMAWC5EQ2LH66EWIA3F45JNMYPKHCWT4N7INRWBQWGQTZF2".into()
                     )
                     .ok();
             }

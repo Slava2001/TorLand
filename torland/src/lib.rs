@@ -1,5 +1,6 @@
 pub mod world;
-mod vec2;
+pub mod vec2;
+pub mod voronoi;
 
 #[cfg(target_arch = "wasm32")]
 use {wasm_bindgen::prelude::*, web_sys::CanvasRenderingContext2d, world::World};
