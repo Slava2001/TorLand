@@ -3,5 +3,3 @@ target
 **/Cargo.lock
 **/*.gen
 **/*.bgen
-site/botc/.gitignore
-site/torland/.gitignore
