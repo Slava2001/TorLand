@@ -13,16 +13,28 @@ export function decompile(input: string): string;
 export class WorldWraper {
   free(): void;
   /**
-   * @param {number} size
-   * @param {string} bot
+   * @param {number} h
+   * @param {number} w
+   * @param {number} cnt
    * @returns {WorldWraper}
    */
-  static new(size: number, bot: string): WorldWraper;
+  static new(h: number, w: number, cnt: number): WorldWraper;
   update(): void;
   /**
    * @param {CanvasRenderingContext2D} ctx
+   * @param {number} color_mod
    */
-  draw(ctx: CanvasRenderingContext2D): void;
+  draw(ctx: CanvasRenderingContext2D, color_mod: number): void;
+  /**
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  draw_bg(ctx: CanvasRenderingContext2D): void;
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @param {string} gen_b32
+   */
+  spawn(x: number, y: number, gen_b32: string): void;
 }
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
@@ -32,7 +44,9 @@ export interface InitOutput {
   readonly __wbg_worldwraper_free: (a: number, b: number) => void;
   readonly worldwraper_new: (a: number, b: number, c: number) => number;
   readonly worldwraper_update: (a: number) => void;
-  readonly worldwraper_draw: (a: number, b: number) => void;
+  readonly worldwraper_draw: (a: number, b: number, c: number) => void;
+  readonly worldwraper_draw_bg: (a: number, b: number) => void;
+  readonly worldwraper_spawn: (a: number, b: number, c: number, d: number, e: number) => void;
   readonly compile: (a: number, b: number, c: number) => void;
   readonly decompile: (a: number, b: number, c: number) => void;
   readonly __wbindgen_malloc: (a: number, b: number) => number;

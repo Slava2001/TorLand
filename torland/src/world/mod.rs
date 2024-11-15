@@ -211,8 +211,8 @@ impl World {
         });
     }
 
-    pub fn spawn(&mut self, pos: Vec2u, gen_b32: String) -> Result<(), ()> {
-        let genom = botc::code_packer::from_b32(&gen_b32).map_err(|_| ())?;
+    pub fn spawn(&mut self, pos: Vec2u, gen_b32: &str) -> Result<(), ()> {
+        let genom = botc::code_packer::from_b32(gen_b32).map_err(|_| ())?;
         let cell = self
             .map
             .get_mut(pos.y)

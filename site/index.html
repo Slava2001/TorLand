@@ -23,7 +23,7 @@
             <div class="menu">
                 <ul>
 					<li><a href="/">Главная</a></li>
-					<li><a href="compiler">Компилятор</a></li>
+					<li><a href="/compiler">Компилятор</a></li>
 				</ul>
             </div>
 
@@ -35,11 +35,20 @@
             <div class="controls">
                 <label for="world_size">World size:</label>
                 <input type="number" id="world_size" name="world_size" min="5" max="100" value="10">
-                <label for="bot_code">Bot:</label>
-                <input type="text" id="bot_code" name="bot_code">
-                <button id="run">run</button>
+                <label for="cluster_cnt">Cluster count:</label>
+                <input type="number" id="cluster_cnt" name="cluster_cnt" min="2" max="100" value="10">
+                <button id="create_word">Create</button>
                 <label for="fps">FPS:</label>
                 <input type="number" id="fps" name="fps" min="1" max="100" value="5">
+                <br>
+                <label for="bot_code">Bot:</label>
+                <input type="text" id="bot_code" name="bot_code" value="MNSIAABREADAA">
+                <select id="coler">
+                    <option value="0">Колонии</option>
+                    <option value="1">Красный</option>
+                    <option value="2">Зеленый</option>
+                    <option value="3">Синий</option>
+                </select>
             </div>
             
         </div>
@@ -49,25 +58,54 @@
 
             const canvas = document.getElementById("canvas");
             const world_size = document.getElementById("world_size");
+            const cluster_cnt = document.getElementById("cluster_cnt");
             const bot_code = document.getElementById("bot_code");
             const fps = document.getElementById("fps");
+            const coler = document.getElementById("coler");
             
+            let background;
             let world;
             let timer;
-            function update() {
-                world.update()
-                world.draw(canvas.getContext("2d"));
-                timer = setTimeout(update, 1000/fps.value);
+
+            function render_word() {
+                canvas.getContext("2d").drawImage(background, 0, 0);
+                world.draw(canvas.getContext("2d"), coler.value);
             }
-            function run() {
-                world = WorldWraper.new(world_size.value, bot_code.value);
-                canvas.height = world_size.value;
-                canvas.width = world_size.value;
-                if (!timer) {
-                    update();
+            coler.onchange = () => {
+                if (world) {
+                    render_word();
                 }
             }
-            document.getElementById("run").onclick = run;
+
+            function update() {
+                world.update();
+                render_word();
+                timer = setTimeout(update, 1000/fps.value);
+            }
+
+            function run() {
+                world = WorldWraper.new(world_size.value, world_size.value, cluster_cnt.value);
+                canvas.height = world_size.value;
+                canvas.width = world_size.value;
+                world.draw_bg(canvas.getContext("2d"));
+                background = new Image();
+                background.src = canvas.toDataURL();
+                clearTimeout(timer);
+                update();
+            }
+            document.getElementById("create_word").onclick = run;
+
+            function on_click(e) {
+                if (!world) {
+                    return;
+                }
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) * world_size.value / rect.width);
+                const y = Math.floor((e.clientY - rect.top) * world_size.value / rect.height);
+                world.spawn(x, y, bot_code.value);
+                render_word();
+            }
+            canvas.onclick = on_click
         </script>
     </section>
     <footer>

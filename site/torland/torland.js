@@ -278,14 +278,13 @@ export class WorldWraper {
         wasm.__wbg_worldwraper_free(ptr, 0);
     }
     /**
-     * @param {number} size
-     * @param {string} bot
+     * @param {number} h
+     * @param {number} w
+     * @param {number} cnt
      * @returns {WorldWraper}
      */
-    static new(size, bot) {
-        const ptr0 = passStringToWasm0(bot, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
-        const len0 = WASM_VECTOR_LEN;
-        const ret = wasm.worldwraper_new(size, ptr0, len0);
+    static new(h, w, cnt) {
+        const ret = wasm.worldwraper_new(h, w, cnt);
         return WorldWraper.__wrap(ret);
     }
     update() {
@@ -293,13 +292,34 @@ export class WorldWraper {
     }
     /**
      * @param {CanvasRenderingContext2D} ctx
+     * @param {number} color_mod
      */
-    draw(ctx) {
+    draw(ctx, color_mod) {
         try {
-            wasm.worldwraper_draw(this.__wbg_ptr, addBorrowedObject(ctx));
+            wasm.worldwraper_draw(this.__wbg_ptr, addBorrowedObject(ctx), color_mod);
         } finally {
             heap[stack_pointer++] = undefined;
         }
+    }
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw_bg(ctx) {
+        try {
+            wasm.worldwraper_draw_bg(this.__wbg_ptr, addBorrowedObject(ctx));
+        } finally {
+            heap[stack_pointer++] = undefined;
+        }
+    }
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {string} gen_b32
+     */
+    spawn(x, y, gen_b32) {
+        const ptr0 = passStringToWasm0(gen_b32, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        wasm.worldwraper_spawn(this.__wbg_ptr, x, y, ptr0, len0);
     }
 }
 
@@ -340,9 +360,15 @@ function __wbg_get_imports() {
     imports.wbg.__wbindgen_object_drop_ref = function(arg0) {
         takeObject(arg0);
     };
+    imports.wbg.__wbg_setfillStyle_2cc2c748b938a95e = function(arg0, arg1, arg2) {
+        getObject(arg0).fillStyle = getStringFromWasm0(arg1, arg2);
+    };
     imports.wbg.__wbg_putImageData_f9c66228770c0556 = function() { return handleError(function (arg0, arg1, arg2, arg3) {
         getObject(arg0).putImageData(getObject(arg1), arg2, arg3);
     }, arguments) };
+    imports.wbg.__wbg_fillRect_6784ab0aab9eebd5 = function(arg0, arg1, arg2, arg3, arg4) {
+        getObject(arg0).fillRect(arg1, arg2, arg3, arg4);
+    };
     imports.wbg.__wbg_newwithu8clampedarrayandsh_585baa1bdfc0d2e2 = function() { return handleError(function (arg0, arg1, arg2, arg3) {
         const ret = new ImageData(getClampedArrayU8FromWasm0(arg0, arg1), arg2 >>> 0, arg3 >>> 0);
         return addHeapObject(ret);

@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <title>wdrop</title>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
-    <link rel="stylesheet" type="text/css" href="css/compiler.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="compiler.css">
 </head>
 
 <body>
@@ -23,7 +23,7 @@
             <div class="menu">
                 <ul>
                     <li><a href="/">Главная</a></li>
-                    <li><a href="compiler">Компилятор</a></li>
+                    <li><a href="/compiler">Компилятор</a></li>
                 </ul>
             </div>
 
@@ -58,8 +58,8 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/monokai.css">
         <script src="compiler.js"></script>
         <script type="module">
-            import init, { compile } from '/botc/botc.js';
-            await init('/botc/botc_bg.wasm');
+            import init, { compile } from './botc/botc.js';
+            await init('./botc/botc_bg.wasm');
             async function run() {
                 const input_code = editor.getValue();
                 if (input_code.trim() == "") {

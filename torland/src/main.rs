@@ -128,7 +128,7 @@ fn main() {
                             (cursor_pos[1] / Y_STEP) as usize,
                         )
                             .into(),
-                        "RXF4CCIAEAGEHUJAPILEJBBM4D7AGOMMAWC5EQ2LH66EWIA3F45JNMYPKHCWT4N7INRWBQWGQTZF2".into()
+                        "RXF4CCIAEAGEHUJAPILEJBBM4D7AGOMMAWC5EQ2LH66EWIA3F45JNMYPKHCWT4N7INRWBQWGQTZF2"
                     )
                     .ok();
             }
