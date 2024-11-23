@@ -6,43 +6,31 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::RenderEvent;
 use piston::window::WindowSettings;
 use piston::{Button, Key, MouseButton, MouseCursorEvent, PressEvent, UpdateEvent};
-use rand::{thread_rng, Rng};
-use torland::vec2::Vec2u;
-use torland::voronoi::Voronoi;
-use torland::world::{Rules, World, WorldConfig};
+use torland::util::{self, get_coler_by_id, get_coler_name_by_id, COLERS_CNT};
 
-const WINDOW_H: f64 = 800.0;
-const WINDOW_W: f64 = 800.0;
-const WORLD_H: usize = 400;
-const WORLD_W: usize = 400;
-const CLUSTER_CNT: usize = 50;
+const WINDOW_H: f64 = 400.0;
+const WINDOW_W: f64 = 400.0;
+const WORLD_H: usize = 200;
+const WORLD_W: usize = 200;
+const CLUSTER_CNT: usize = 10;
 const SUN_MAX_LVL: usize = 10;
 
+const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
+const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
+
 fn main() {
-    let mut window: Window = WindowSettings::new("TorLand", [WINDOW_H, WINDOW_W])
+    let mut window: Window = WindowSettings::new("", [WINDOW_H, WINDOW_W])
         .graphics_api(OpenGL::V3_2)
         .exit_on_esc(true)
         .build()
         .unwrap();
     let mut gl = GlGraphics::new(OpenGL::V3_2);
 
-    let mut colors = Vec::<Vec2u>::new();
-    for _ in 0..CLUSTER_CNT {
-        let sun = thread_rng().gen_range(0..SUN_MAX_LVL) as usize;
-        colors.push((sun, SUN_MAX_LVL - sun + thread_rng().gen_range(0..2)).into());
-    }
-    colors.push((0usize, 0).into());
+    let mut world = util::make_word(WORLD_H, WORLD_W, CLUSTER_CNT);
 
-    let voron = Voronoi::new(&mut thread_rng(), WORLD_H, WORLD_W, CLUSTER_CNT);
-
-    let world_cfg = WorldConfig {
-        h: WORLD_H,
-        w: WORLD_W,
-        rules: Rules::default(),
-        sun: |x, y| colors[voron.get(x, y)].x,
-        mineral: |x, y| colors[voron.get(x, y)].y,
-    };
-    let mut world = World::new(world_cfg);
+    let mut coler_id = 0;
+    let mut coler = get_coler_by_id(coler_id);
+    window.window.set_title(get_coler_name_by_id(coler_id));
 
     let mut pause = true;
     let mut by_step = true;
@@ -80,12 +68,12 @@ fn main() {
             gl.draw(args.viewport(), |c, g| {
                 clear([1.0; 4], g);
                 background_img.draw(&background_texture, &DrawState::default(), c.transform, g);
-                const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
-                const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
-                world.foreach_bot(|x, y, _| {
+                let world_info = world.get_info();
+                world.foreach_bot(|x, y, b| {
                     let rect = [X_STEP * x as f64, Y_STEP * y as f64, X_STEP, Y_STEP];
-                    let color = [0.0, 0.0, 0.0, 1.0];
-                    Rectangle::new(color).draw(rect, &Default::default(), c.transform, g);
+                    let (cr, cg, cb) = coler(&world_info, &b.get_info());
+                    Rectangle::new([cr as f32 / 255.0, cg as f32 / 255.0, cb as f32 / 255.0, 1.0])
+                        .draw(rect, &Default::default(), c.transform, g);
                 });
                 draw_cursor(&cursor_pos, c, g);
             });
@@ -118,27 +106,54 @@ fn main() {
                 eprintln!("by_step: {by_step}");
             }
 
+            if let Button::Keyboard(Key::Space) = args {
+                coler_id = (coler_id + 1) % COLERS_CNT;
+                coler = get_coler_by_id(coler_id);
+                window.window.set_title(get_coler_name_by_id(coler_id));
+            }
+
             if let Button::Mouse(MouseButton::Left) = args {
-                const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
-                const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
+                let pos = (
+                    (cursor_pos[0] / X_STEP) as usize,
+                    (cursor_pos[1] / Y_STEP) as usize,
+                );
                 world
                     .spawn(
-                        (
-                            (cursor_pos[0] / X_STEP) as usize,
-                            (cursor_pos[1] / Y_STEP) as usize,
-                        )
-                            .into(),
-                        "RXF4CCIAEAGEHUJAPILEJBBM4D7AGOMMAWC5EQ2LH66EWIA3F45JNMYPKHCWT4N7INRWBQWGQTZF2"
+                        pos.into(),
+                        "KXEMCCIAGAEAIQIJSH6IHWD7MELOHIT6LQMA4TVFON6FZBHWG5JZT3AODYJA",
+                        // "MNSIAABREADAA",
+                        // "PWFUWCQAEAEAL3NXNJL5D7IP2ZQXUZECFZ2GAEHEJUTWNQYBFM6I2777HQLFSMSMIET625F2UI3BO"
                     )
                     .ok();
+            }
+
+            if let Button::Mouse(MouseButton::Right) = args {
+                let pos = (
+                    (cursor_pos[0] / X_STEP) as usize,
+                    (cursor_pos[1] / Y_STEP) as usize,
+                );
+                if let Ok(i) = world.get_bot_info(pos.into()) {
+                    eprintln!("{}", i);
+                    eprintln!(
+                        "code: \n=========================\n{}=========================",
+                        botc::compiler::decompile(Vec::clone(&i.genom)).iter().fold(
+                            String::new(),
+                            |mut acc, cmd| {
+                                acc.push_str(format!("{}", cmd).as_str());
+                                acc.push_str("\n");
+                                acc
+                            }
+                        )
+                    );
+                } else {
+                    eprintln!("No bot");
+                }
             }
         }
     }
 }
 
 fn draw_cursor(cursor_pos: &[f64; 2], c: Context, g: &mut GlGraphics) {
-    const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
-    const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
     let rect = [
         X_STEP * (cursor_pos[0] / X_STEP).floor(),
         Y_STEP * (cursor_pos[1] / Y_STEP).floor(),

@@ -7,10 +7,10 @@ use std::{
     usize,
 };
 
-mod bot;
-pub use bot::Bot;
+pub mod bot;
 
 use crate::vec2::Vec2u;
+use bot::Bot;
 
 type BotRef = Rc<RefCell<Bot>>;
 
@@ -24,15 +24,18 @@ pub struct Cell {
 pub struct Rules {
     pub max_commands_per_cycle: usize,
     pub energy_for_split: isize,
-    pub energy_per_sun: isize,
     pub energy_per_mineral: isize,
     pub energy_per_step: isize,
     pub age_per_energy_penalty: isize,
     pub start_energy: isize,
     pub max_energy: isize,
     pub on_bite_energy_delimiter: isize,
-    pub max_randov_value: isize,
-    pub mutation_ver: f64
+    pub max_random_value: isize,
+    pub mutation_ver: f64,
+    pub energy_per_sun: isize,
+    pub energy_per_sun_free_boost: isize,
+    pub energy_per_sun_bro_boost: isize,
+    pub energy_per_sun_oth_boost: isize,
 }
 
 impl Default for Rules {
@@ -40,25 +43,40 @@ impl Default for Rules {
         Rules {
             max_commands_per_cycle: 10,
             energy_for_split: 1000,
-            energy_per_sun: 3,
-            energy_per_mineral: 6,
-            energy_per_step: 10,
-            age_per_energy_penalty: 1000,
+            energy_per_sun: 10,
+            energy_per_mineral: 10,
+            energy_per_step: 50,
+            age_per_energy_penalty: 100,
             start_energy: 100,
             on_bite_energy_delimiter: 10,
             max_energy: 10_000,
-            max_randov_value: 1000,
-            mutation_ver: 0.1
+            max_random_value: 10_000,
+            mutation_ver: 0.1,
+            energy_per_sun_free_boost: 2,
+            energy_per_sun_bro_boost: 0,
+            energy_per_sun_oth_boost: -2,
         }
     }
 }
 
-pub struct WorldConfig<T: FnMut(usize, usize)-> usize, U: FnMut(usize, usize)-> usize> {
+#[derive(Clone, Copy)]
+pub struct Info {
+    pub h: usize,
+    pub w: usize,
+    pub max_sun: usize,
+    pub max_mineral: usize,
+    pub max_age: usize,
+    pub min_age: usize,
+    pub max_energy: usize,
+    pub min_energy: usize,
+}
+
+pub struct WorldConfig<T: FnMut(usize, usize) -> usize, U: FnMut(usize, usize) -> usize> {
     pub h: usize,
     pub w: usize,
     pub rules: Rules,
     pub sun: T,
-    pub mineral: U
+    pub mineral: U,
 }
 
 pub struct World {
@@ -66,7 +84,9 @@ pub struct World {
     map: Vec<Vec<Cell>>,
     bots: Vec<(Vec2u, BotRef)>,
     colony_cnt: usize,
-    rules: Rules
+    genom_cnt: usize,
+    rules: Rules,
+    info: Info,
 }
 
 struct WordAccessor<'a> {
@@ -75,6 +95,7 @@ struct WordAccessor<'a> {
     map: &'a mut Vec<Vec<Cell>>,
     newborn: &'a mut Vec<(Vec2u, BotRef)>,
     colony_cnt: &'a mut usize,
+    genom_cnt: &'a mut usize,
 }
 
 impl<'a> WordAccessor<'_> {
@@ -94,6 +115,12 @@ impl<'a> WordAccessor<'_> {
     pub fn get_new_colony_id(&mut self) -> usize {
         let rc = *self.colony_cnt;
         *self.colony_cnt = *self.colony_cnt + 1;
+        rc
+    }
+
+    pub fn get_new_genom_id(&mut self) -> usize {
+        let rc = *self.genom_cnt;
+        *self.genom_cnt = *self.genom_cnt + 1;
         rc
     }
 
@@ -142,19 +169,44 @@ impl<'a> WordAccessor<'_> {
         };
         Some(RefCell::borrow(Rc::borrow(bot)).get_colony() == colony)
     }
+
+    fn energy_diffusion(&self, colony: usize, mut energy: isize) -> isize {
+        let mut bro = Vec::new();
+        for d in [Dir::Front, Dir::Right, Dir::Back, Dir::Left] {
+            let pos = self.pos.mod_add(d.into(), self.map_size);
+            if let Some(b) = &self.map[pos.y][pos.x].bot {
+                if RefCell::borrow(Rc::borrow(b)).get_colony() == colony {
+                    bro.push(b);
+                    energy += RefCell::borrow(Rc::borrow(b)).get_energy();
+                }
+            }
+        }
+        energy = energy / (bro.len() + 1) as isize;
+        for b in bro.into_iter() {
+            RefCell::borrow_mut(Rc::borrow(b)).set_energy(energy);
+        }
+        energy
+    }
 }
 
 impl World {
-    pub fn new<T: FnMut(usize, usize)->usize, U: FnMut(usize, usize)->usize>(mut cfg: WorldConfig<T, U>) -> Self {
+    pub fn new<T: FnMut(usize, usize) -> usize, U: FnMut(usize, usize) -> usize>(
+        mut cfg: WorldConfig<T, U>,
+    ) -> Self {
+        let mut max_sun: usize = 0;
+        let mut max_mineral: usize = 0;
         let mut map = Vec::new();
         for y in 0..cfg.h {
             let mut row = Vec::new();
             for x in 0..cfg.w {
-                row.push(Cell {
+                let c = Cell {
                     sun: (cfg.sun)(x, y),
                     mineral: (cfg.mineral)(x, y),
                     bot: None,
-                });
+                };
+                max_sun = max_sun.max(c.sun);
+                max_mineral = max_mineral.max(c.mineral);
+                row.push(c);
             }
             map.push(row);
         }
@@ -163,11 +215,27 @@ impl World {
             map,
             bots: Vec::new(),
             colony_cnt: 0,
-            rules: cfg.rules
+            genom_cnt: 1,
+            info: Info {
+                h: cfg.h,
+                w: cfg.w,
+                max_age: usize::MAX,
+                min_age: 0,
+                max_sun,
+                max_mineral,
+                max_energy: usize::MAX,
+                min_energy: 0,
+            },
+            rules: cfg.rules,
         }
     }
 
     pub fn update(&mut self) -> Result<(), ()> {
+        self.info.max_age = 0;
+        self.info.max_energy = 0;
+        self.info.min_age = usize::MAX;
+        self.info.min_energy = usize::MAX;
+
         let mut newborn: Vec<(Vec2u, BotRef)> = Vec::new();
         for (pos, b) in self.bots.iter_mut() {
             let mut wa = WordAccessor {
@@ -176,9 +244,24 @@ impl World {
                 map_size: self.size,
                 map: &mut self.map,
                 colony_cnt: &mut self.colony_cnt,
+                genom_cnt: &mut self.genom_cnt,
             };
             RefCell::borrow_mut(Rc::borrow(b)).update(&mut wa, &self.rules)?;
+            let info = RefCell::borrow(Rc::borrow(b)).get_info();
+            self.info.max_age = self.info.max_age.max(info.age);
+            self.info.max_energy = self.info.max_age.max(info.energy);
+            self.info.min_age = self.info.min_age.min(info.age);
+            self.info.min_energy = self.info.min_energy.min(info.energy);
         }
+
+        for (_, b) in newborn.iter_mut() {
+            let info = RefCell::borrow(Rc::borrow(b)).get_info();
+            self.info.max_age = self.info.max_age.max(info.age);
+            self.info.max_energy = self.info.max_age.max(info.energy);
+            self.info.min_age = self.info.min_age.min(info.age);
+            self.info.min_energy = self.info.min_energy.min(info.energy);
+        }
+
         self.bots.append(&mut newborn);
         self.bots.retain(|(pos, bot)| {
             if RefCell::borrow_mut(Rc::borrow(bot)).is_live() {
@@ -220,7 +303,7 @@ impl World {
             .get_mut(pos.x)
             .ok_or(())?;
         if let None = cell.bot {
-            let b = Rc::new(RefCell::new(Bot::new(self.colony_cnt, genom)));
+            let b = Rc::new(RefCell::new(Bot::new(self.colony_cnt, 0, Rc::new(genom))));
             self.colony_cnt = self.colony_cnt + 1;
             self.map[pos.y][pos.x].bot = Some(b.clone());
             self.bots.push((pos, b));
@@ -228,5 +311,22 @@ impl World {
         } else {
             Err(())
         }
+    }
+
+    pub fn get_info(&self) -> Info {
+        self.info
+    }
+
+    pub fn get_bot_info(&self, pos: Vec2u) ->  Result<bot::Info, ()> {
+        let cell = self
+        .map
+        .get(pos.y)
+        .ok_or(())?
+        .get(pos.x)
+        .ok_or(())?;
+        let Some(b) = &cell.bot else {
+            return Err(());
+        };
+        Ok(RefCell::borrow(Rc::borrow(b)).get_info())
     }
 }
