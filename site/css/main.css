@@ -44,18 +44,22 @@ footer .container p {
     height: 50%;
     border: solid transparent 1px;
 }
+
 .github_link:hover {
     border: none;
 }
+
 .github_link .github_link_img {
     float: left;
     height: 100%;
 }
+
 .github_link .github_link_img img {
     clip-path: circle();
     height: 100%;
     vertical-align: center;
 }
+
 .github_link .github_link_text {
     float: right;
     display: table;
@@ -63,6 +67,7 @@ footer .container p {
     text-align: center;
     padding-left: 10px;
 }
+
 .github_link .github_link_text p {
     display: table-cell;
     vertical-align: middle;
@@ -102,4 +107,4 @@ footer .container p {
 
 .menu ul li a:hover {
     background-color: rgb(182, 182, 182);
-  }
+}

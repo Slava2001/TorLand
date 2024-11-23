@@ -5,6 +5,7 @@ pub mod world;
 
 #[cfg(target_arch = "wasm32")]
 use {
+    std::borrow::Borrow,
     std::usize,
     wasm_bindgen::{prelude::*, Clamped},
     web_sys::{CanvasRenderingContext2d, ImageData},
@@ -65,5 +66,11 @@ impl WorldWraper {
 
     pub fn spawn(&mut self, x: usize, y: usize, gen_b32: &str) {
         self.world.spawn((x, y).into(), gen_b32).ok();
+    }
+
+    pub fn get_bot(&mut self, x: usize, y: usize) -> String {
+        self.world.get_bot_info((x, y).into()).ok().map(|i| {
+            botc::code_packer::to_b32(i.genom.borrow()).unwrap_or("Invalid Code".into())
+        }).unwrap_or("No Bot".into())
     }
 }

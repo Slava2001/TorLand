@@ -13,7 +13,11 @@ section .container {
 .compile_ctl {
     width: 100%;
     align-content: center;
-    height: 30px;
+    height: 40px;
+}
+
+.compile_ctl label { 
+    color: white;
 }
 
 #theme_selector {
@@ -26,7 +30,7 @@ section .container {
 }
 
 .compile_textarea {
-    height: calc(100% - 30px);
+    height: calc(100% - 40px);
 }
 
 .compile_textarea #output {
