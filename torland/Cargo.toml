@@ -12,8 +12,11 @@ path = "src/main.rs"
 
 [dependencies]
 botc = { workspace = true }
+config = "0.14.1"
 num-traits = "0.2.19"
 rand = "0.8.5"
+serde = "1.0.215"
+serde_json = "1.0.133"
 
 [target.'cfg(any(target_arch = "x86", target_arch = "x86_64"))'.dependencies]
 piston = "0.55.0"

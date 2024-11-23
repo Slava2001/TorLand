@@ -1,6 +1,6 @@
 use std::{borrow::Borrow, rc::Rc};
 
-use super::{Rules, WordAccessor};
+use super::{Rules, WorldAccessor};
 use botc::code::{Command, Dir, Reg, Val};
 use rand::{thread_rng, Rng};
 
@@ -89,7 +89,7 @@ impl Bot {
         }
     }
 
-    pub(super) fn update(&mut self, wa: &mut WordAccessor, rules: &Rules) -> Result<(), ()> {
+    pub(super) fn update(&mut self, wa: &mut WorldAccessor, rules: &Rules) -> Result<(), ()> {
         if !self.is_live {
             return Ok(());
         }
@@ -228,11 +228,7 @@ impl Bot {
                                 new.genom.len(),
                                 rules.max_random_value,
                             );
-                            if thread_rng().gen_bool(0.5) {
-                                genom.insert(index,command);
-                            } else {
-                                genom[index] = command;
-                            }
+                            genom[index] = command;
                             new.genom = Rc::new(genom);
                             new.genom_id = wa.get_new_genom_id();
                         }

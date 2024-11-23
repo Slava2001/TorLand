@@ -278,13 +278,13 @@ export class WorldWraper {
         wasm.__wbg_worldwraper_free(ptr, 0);
     }
     /**
-     * @param {number} h
-     * @param {number} w
-     * @param {number} cnt
+     * @param {string} cfg
      * @returns {WorldWraper}
      */
-    static new(h, w, cnt) {
-        const ret = wasm.worldwraper_new(h, w, cnt);
+    static new(cfg) {
+        const ptr0 = passStringToWasm0(cfg, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ret = wasm.worldwraper_new(ptr0, len0);
         return WorldWraper.__wrap(ret);
     }
     update() {

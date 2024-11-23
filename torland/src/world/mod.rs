@@ -1,4 +1,5 @@
 use botc::code::Dir;
+use serde::Deserialize;
 use std::{
     borrow::Borrow,
     cell::{Ref, RefCell},
@@ -21,6 +22,7 @@ pub struct Cell {
     pub bot: Option<BotRef>,
 }
 
+#[derive(Deserialize)]
 pub struct Rules {
     pub max_commands_per_cycle: usize,
     pub energy_for_split: isize,
@@ -36,27 +38,6 @@ pub struct Rules {
     pub energy_per_sun_free_boost: isize,
     pub energy_per_sun_bro_boost: isize,
     pub energy_per_sun_oth_boost: isize,
-}
-
-impl Default for Rules {
-    fn default() -> Self {
-        Rules {
-            max_commands_per_cycle: 10,
-            energy_for_split: 1000,
-            energy_per_sun: 10,
-            energy_per_mineral: 10,
-            energy_per_step: 50,
-            age_per_energy_penalty: 100,
-            start_energy: 100,
-            on_bite_energy_delimiter: 10,
-            max_energy: 10_000,
-            max_random_value: 10_000,
-            mutation_ver: 0.1,
-            energy_per_sun_free_boost: 2,
-            energy_per_sun_bro_boost: 0,
-            energy_per_sun_oth_boost: -2,
-        }
-    }
 }
 
 #[derive(Clone, Copy)]
@@ -89,7 +70,7 @@ pub struct World {
     info: Info,
 }
 
-struct WordAccessor<'a> {
+struct WorldAccessor<'a> {
     pos: &'a mut Vec2u,
     map_size: Vec2u,
     map: &'a mut Vec<Vec<Cell>>,
@@ -98,7 +79,7 @@ struct WordAccessor<'a> {
     genom_cnt: &'a mut usize,
 }
 
-impl<'a> WordAccessor<'_> {
+impl<'a> WorldAccessor<'_> {
     fn mov(&mut self, dir: Dir) -> Result<(), ()> {
         let pos = self.pos.mod_add(dir.into(), self.map_size);
         if let None = self.map[pos.y][pos.x].bot {
@@ -238,7 +219,7 @@ impl World {
 
         let mut newborn: Vec<(Vec2u, BotRef)> = Vec::new();
         for (pos, b) in self.bots.iter_mut() {
-            let mut wa = WordAccessor {
+            let mut wa = WorldAccessor {
                 newborn: &mut newborn,
                 pos: pos,
                 map_size: self.size,

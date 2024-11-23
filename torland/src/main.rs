@@ -12,8 +12,6 @@ const WINDOW_H: f64 = 400.0;
 const WINDOW_W: f64 = 400.0;
 const WORLD_H: usize = 200;
 const WORLD_W: usize = 200;
-const CLUSTER_CNT: usize = 10;
-const SUN_MAX_LVL: usize = 10;
 
 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
@@ -26,7 +24,35 @@ fn main() {
         .unwrap();
     let mut gl = GlGraphics::new(OpenGL::V3_2);
 
-    let mut world = util::make_word(WORLD_H, WORLD_W, CLUSTER_CNT);
+    let config = r#"
+    {
+        "sun_max_lvl": 10,
+        "mineral_max_lvl": 10,
+        "height": 200,
+        "width": 200,
+        "word_type": "Clustered",
+        "cluster_cnt": 100,
+        "rules": {
+            "max_commands_per_cycle": 10,
+            "energy_for_split": 1000,
+            "energy_per_sun": 10,
+            "energy_per_mineral": 10,
+            "energy_per_step": 50,
+            "age_per_energy_penalty": 100,
+            "start_energy": 100,
+            "on_bite_energy_delimiter": 10,
+            "max_energy": 10000,
+            "max_random_value": 10000,
+            "mutation_ver": 0.01,
+            "energy_per_sun_free_boost": 10,
+            "energy_per_sun_bro_boost": 5,
+            "energy_per_sun_oth_boost": -2
+        }
+    }
+    "#;
+    let mut world = util::make_world(&config)
+        .map_err(|e| eprintln!("Failed to create world: {e}"))
+        .unwrap();
 
     let mut coler_id = 0;
     let mut coler = get_coler_by_id(coler_id);
@@ -40,11 +66,12 @@ fn main() {
     let mut events = Events::new(event_settings);
 
     let mut background_texture_bytes = [0u8; WORLD_H*WORLD_W*4/*rgba - 4 bytes*/];
+    let i = world.get_info();
     world.foreach_cell(|x, y, cell| {
         let color = [
-            (cell.sun * 255 / SUN_MAX_LVL) as u8,
-            (cell.sun * 255 / SUN_MAX_LVL) as u8,
-            (cell.mineral * 255 / SUN_MAX_LVL) as u8,
+            (cell.sun * 255 / i.max_sun) as u8,
+            (cell.sun * 255 / i.max_sun) as u8,
+            (cell.mineral * 255 / i.max_mineral) as u8,
             255u8,
         ];
         background_texture_bytes[(y * WORLD_W + x) * 4..(y * WORLD_W + x + 1) * 4]

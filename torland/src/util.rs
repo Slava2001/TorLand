@@ -2,26 +2,64 @@ use crate::voronoi::Voronoi;
 use crate::world::{bot, Rules, World, WorldConfig};
 use crate::{vec2, world};
 use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
 use std::usize;
 
-pub fn make_word(h: usize, w: usize, cnt: usize) -> World {
-    const SUN_MAX_LVL: usize = 10;
+#[derive(Deserialize)]
+struct Config {
+    sun_max_lvl: usize,
+    mineral_max_lvl: usize,
+    height: usize,
+    width: usize,
+    word_type: WorldType,
+    rules: Rules,
+    cluster_cnt: Option<usize>
+}
+#[derive(Deserialize, Serialize)]
+enum WorldType {
+    Uniform,
+    Linear,
+    Clustered,
+}
 
-    let mut cluster_info = Vec::<vec2::Vec2u>::new();
-    for _ in 0..cnt {
-        let sun = thread_rng().gen_range(0..SUN_MAX_LVL) as usize;
-        cluster_info.push((sun, SUN_MAX_LVL - sun + thread_rng().gen_range(0..2)).into());
+pub fn make_world(cfg: &str) -> Result<World, String> {
+    let cfg: Config =
+        serde_json::from_str(cfg).map_err(|e| format!("Failed to parse config: {e}"))?;
+
+    match cfg.word_type {
+        WorldType::Uniform => Ok(World::new(WorldConfig {
+            h: cfg.height,
+            w: cfg.width,
+            rules: cfg.rules,
+            sun: |_, _| cfg.sun_max_lvl,
+            mineral: |_, _| cfg.mineral_max_lvl,
+        })),
+        WorldType::Linear => Ok(World::new(WorldConfig {
+            h: cfg.height,
+            w: cfg.width,
+            rules: cfg.rules,
+            sun: |_, y| y * cfg.sun_max_lvl / cfg.height,
+            mineral: |_, y| (cfg.height - y) * cfg.sun_max_lvl / cfg.height,
+        })),
+        WorldType::Clustered => {
+            let cluster_cnt = cfg.cluster_cnt.unwrap_or(1);
+            let mut cluster_info = Vec::<vec2::Vec2u>::new();
+            for _ in 0..cluster_cnt {
+                let sun = thread_rng().gen_range(0..=cfg.sun_max_lvl);
+                let mineral = thread_rng().gen_range(0..=cfg.mineral_max_lvl);
+                cluster_info.push((sun, mineral).into());
+            }
+            cluster_info.push((0usize, 0).into());
+            let voron = Voronoi::new(&mut thread_rng(), cfg.height, cfg.width, cluster_cnt);
+            Ok(World::new(WorldConfig {
+                h: cfg.height,
+                w: cfg.width,
+                rules: cfg.rules,
+                sun: |x, y| cluster_info[voron.get(x, y)].x,
+                mineral: |x, y| cluster_info[voron.get(x, y)].y,
+            }))
+        }
     }
-    cluster_info.push((0usize, 0).into());
-    let voron = Voronoi::new(&mut thread_rng(), h, w, cnt);
-
-    World::new(WorldConfig {
-        h,
-        w,
-        rules: Rules::default(),
-        sun: |x, y| cluster_info[voron.get(x, y)].x,
-        mineral: |x, y| cluster_info[voron.get(x, y)].y,
-    })
 }
 
 fn get_color_by_id(seed: usize) -> (u8, u8, u8) {

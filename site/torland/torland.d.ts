@@ -13,12 +13,10 @@ export function decompile(input: string): string;
 export class WorldWraper {
   free(): void;
   /**
-   * @param {number} h
-   * @param {number} w
-   * @param {number} cnt
+   * @param {string} cfg
    * @returns {WorldWraper}
    */
-  static new(h: number, w: number, cnt: number): WorldWraper;
+  static new(cfg: string): WorldWraper;
   update(): void;
   /**
    * @param {CanvasRenderingContext2D} ctx
@@ -42,7 +40,7 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly __wbg_worldwraper_free: (a: number, b: number) => void;
-  readonly worldwraper_new: (a: number, b: number, c: number) => number;
+  readonly worldwraper_new: (a: number, b: number) => number;
   readonly worldwraper_update: (a: number) => void;
   readonly worldwraper_draw: (a: number, b: number, c: number) => void;
   readonly worldwraper_draw_bg: (a: number, b: number) => void;
