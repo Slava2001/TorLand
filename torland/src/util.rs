@@ -84,7 +84,7 @@ fn get_color_grad(x: f32) -> (u8, u8, u8) {
     )
 }
 
-pub const COLERS_CNT: usize = 6;
+pub const COLERS_CNT: usize = 7;
 pub fn get_coler_by_id(id: usize) -> fn(&world::Info, &bot::Info) -> (u8, u8, u8) {
     match id % COLERS_CNT {
         0 => |_, b| get_color_by_id(b.colony_id),
