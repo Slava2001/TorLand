@@ -76,7 +76,11 @@
 
             async function run_decompile() {
                 const output_code = decompile(document.getElementById("bot_code").value)
-                editor.setValue(output_code);
+                if (output_code.includes("Failed")) {
+                    document.getElementById("output").value = output_code;
+                } else {
+                    editor.setValue(output_code);
+                }
             }
             document.getElementById("decompile_btn").addEventListener('click', run_decompile);
         </script>
