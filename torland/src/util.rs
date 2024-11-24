@@ -38,8 +38,8 @@ pub fn make_world(cfg: &str) -> Result<World, String> {
             h: cfg.height,
             w: cfg.width,
             rules: cfg.rules,
-            sun: |_, y| y * cfg.sun_max_lvl / cfg.height,
-            mineral: |_, y| (cfg.height - y) * cfg.sun_max_lvl / cfg.height,
+            sun: |_, y| (cfg.height - y) * cfg.sun_max_lvl / cfg.height,
+            mineral: |_, y| y * cfg.sun_max_lvl / cfg.height,
         })),
         WorldType::Clustered => {
             let cluster_cnt = cfg.cluster_cnt.unwrap_or(1);
