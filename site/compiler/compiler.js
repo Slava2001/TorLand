@@ -4,20 +4,20 @@ const KEYWORDS = {
         'mov': ['Dir'],
         'rot': ['Dir'],
         'jmp': ['Lable'],
-        'jmg': ['Lable'],
-        'jnl': ['Lable'],
+        'cmp': ['Reg', 'Reg'],
         'jme': ['Lable'],
         'jne': ['Lable'],
-        'jmf': ['Lable'],
-        'jnf': ['Lable'],
+        'jmg': ['Lable'],
+        'jml': ['Lable'],
+        'jle': ['Lable'],
+        'jge': ['Lable'],
         'jmb': ['Lable'],
         'jnb': ['Lable'],
         'jmc': ['Lable'],
         'jnc': ['Lable'],
-        'jge': ['Lable'],
-        'jle': ['Lable'],
+        'jmf': ['Lable'],
+        'jnf': ['Lable'],
         'chk': ['Dir'],
-        'cmp': ['Reg', 'Reg'],
         'cmpv': ['Reg', 'Val'],
         'split': ['Dir', 'Lable'],
         'forc': ['Dir', 'Lable'],
@@ -26,19 +26,19 @@ const KEYWORDS = {
         'absorb': [],
         'call': ['Lable'],
         'ret': [],
-        'ld': ['Reg', 'Reg'],
-        'ldv': ['RwReg', 'Val']
+        'ld': ['RwReg', 'Reg'],
+        'ldv': ['RwReg', 'Val'],
     },
     'Dir': {
         'values': ['front', 'frontright', 'right', 'backright', 'back', 'backleft', 'left', 'frontleft'],
         'type': "variable"
     },
     'RwReg': {
-        'values': ['ax', 'bx', 'cx', 'dx'],
+        'values': ['Ax', 'Bx', 'Cx', 'Dx'],
         'type': "variable"
     },
     'Reg': {
-        'values': ['ax', 'bx', 'cx', 'dx', 'en', 'ag', 'sd', 'md'],
+        'values': ['Ax', 'Bx', 'Cx', 'Dx', 'En', 'Ag', 'Sd', 'Md'],
         'type': "variable"
     },
     'Lable': {
@@ -51,6 +51,8 @@ const KEYWORDS = {
     }
 };
 const COMMANDS = Object.keys(KEYWORDS.commands);
+const REGS = KEYWORDS.Reg.values;
+const DIRS = KEYWORDS.Dir.values;
 const LABLE_REGEX = /^[A-Za-z_]+[A-Za-z0-9_]*:$/;
 
 
@@ -94,8 +96,7 @@ CodeMirror.defineMode("BotLang", function () {
                     if (KEYWORDS[exp_ty].parser) {
                         return KEYWORDS[exp_ty].parser(stream, state);
                     }
-                    if (KEYWORDS[exp_ty].values.includes(word)) {
-
+                    if (KEYWORDS[exp_ty].values.some(x => x.toLowerCase() == word)) {
                         return KEYWORDS[exp_ty].type;
                     }
                     return "error ";
@@ -122,14 +123,28 @@ CodeMirror.defineMode("BotLang", function () {
     };
 });
 
+function get_lables() {
+    let all_code = editor.getValue();
+    let words = all_code.split(/\s/);
+    let _lables = words.filter(s => LABLE_REGEX.test(s));
+    let lables = _lables.map(s => s.replace(':', ''));
+    return lables;
+}
+
 function BotLangHint(cm) {
     const cursor = cm.getCursor();
     const token = cm.getTokenAt(cursor);
-    const word = token.string.trim()
+    const word = token.string.trim().toLowerCase;
     token.type = "error";
     var filtered = [];
     if (word != "") {
         filtered = COMMANDS.filter(s => s.startsWith(word) && s != word);
+        filtered = filtered.concat(REGS.filter(s => s.toLowerCase().startsWith(word) 
+                                                    && s.toLowerCase() != word));
+        filtered = filtered.concat(DIRS.filter(s => s.toLowerCase().startsWith(word) 
+                                                    && s.toLowerCase() != word));
+        filtered = filtered.concat(get_lables().filter(s => s.toLowerCase().startsWith(word) 
+                                                    && s.toLowerCase() != word));
     }
 
     return {

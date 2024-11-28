@@ -284,7 +284,9 @@ impl World {
             .get_mut(pos.x)
             .ok_or(())?;
         if let None = cell.bot {
-            let b = Rc::new(RefCell::new(Bot::new(self.colony_cnt, 0, Rc::new(genom))));
+            let mut b = Bot::new(self.colony_cnt, 0, Rc::new(genom));
+            b.set_energy(self.rules.start_energy);
+            let b = Rc::new(RefCell::new(b));
             self.colony_cnt = self.colony_cnt + 1;
             self.map[pos.y][pos.x].bot = Some(b.clone());
             self.bots.push((pos, b));

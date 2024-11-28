@@ -1,4 +1,4 @@
-use std::{borrow::Borrow, rc::Rc};
+use std::{borrow::Borrow, isize, rc::Rc};
 
 use super::{Rules, WorldAccessor};
 use botc::code::{Command, Dir, Reg, Val};
@@ -59,11 +59,11 @@ impl Default for State {
 }
 
 impl State {
-    fn get_reg_mut(&mut self, reg: &Reg) -> &mut Val {
-        &mut self.regs[*reg as usize]
+    fn get_reg_mut(&mut self, reg: Reg) -> &mut Val {
+        &mut self.regs[reg as usize]
     }
-    fn get_reg(&self, reg: &Reg) -> &Val {
-        &self.regs[*reg as usize]
+    fn get_reg(&self, reg: Reg) -> &Val {
+        &self.regs[reg as usize]
     }
 }
 
@@ -81,9 +81,7 @@ impl Bot {
         Self {
             colony_id,
             genom_id,
-            state: State {
-                ..Default::default()
-            },
+            state: State::default(),
             genom,
             is_live: true,
         }
@@ -92,9 +90,6 @@ impl Bot {
     pub(super) fn update(&mut self, wa: &mut WorldAccessor, rules: &Rules) -> Result<(), ()> {
         if !self.is_live {
             return Ok(());
-        }
-        if *self.state.get_reg(&Reg::En) == 0 {
-            *self.state.get_reg_mut(&Reg::En) = rules.start_energy;
         }
 
         for _ in 0..rules.max_commands_per_cycle {
@@ -109,27 +104,6 @@ impl Bot {
                 Command::Rot(dir) => {
                     self.state.dir = self.state.dir + dir;
                     break;
-                }
-                Command::Jmp(lable) => self.state.pc = *lable,
-                Command::Jmg(lable) => {
-                    if self.state.fs {
-                        self.state.pc = *lable
-                    }
-                }
-                Command::Jnl(lable) => {
-                    if !self.state.fs {
-                        self.state.pc = *lable
-                    }
-                }
-                Command::Jme(lable) => {
-                    if self.state.fz {
-                        self.state.pc = *lable
-                    }
-                }
-                Command::Jne(lable) => {
-                    if !self.state.fz {
-                        self.state.pc = *lable
-                    }
                 }
                 Command::Jmf(lable) => {
                     if self.state.ef {
@@ -161,20 +135,10 @@ impl Bot {
                         self.state.pc = *lable
                     }
                 }
-                Command::Jge(lable) => {
-                    if self.state.fz || self.state.fs {
-                        self.state.pc = *lable
-                    }
-                }
-                Command::Jle(lable) => {
-                    if self.state.fz || !self.state.fs {
-                        self.state.pc = *lable
-                    }
-                }
                 Command::Chk(dir) => {
                     let dir = *dir + self.state.dir;
-                    *self.state.get_reg_mut(&Reg::Sd) = wa.get_sun_diff(dir);
-                    *self.state.get_reg_mut(&Reg::Md) = wa.get_mineral_diff(dir);
+                    *self.state.get_reg_mut(Reg::Sd) = wa.get_sun_diff(dir);
+                    *self.state.get_reg_mut(Reg::Md) = wa.get_mineral_diff(dir);
                     let (ef, ec) = match wa.is_some_colony(dir, self.colony_id) {
                         Some(is_some) => (false, is_some),
                         None => (true, false),
@@ -185,25 +149,25 @@ impl Bot {
                     break;
                 }
                 Command::Cmp(reg1, reg2) => {
-                    let reg1 = *self.state.get_reg(reg1);
-                    let reg2 = *self.state.get_reg(reg2);
+                    let reg1 = *self.state.get_reg(*reg1);
+                    let reg2 = *self.state.get_reg(*reg2);
                     self.state.fz = reg1 == reg2;
                     self.state.fs = reg1 >= reg2;
                 }
                 Command::Cmpv(reg, val) => {
-                    let reg = *self.state.get_reg(reg);
+                    let reg = *self.state.get_reg(*reg);
                     self.state.fz = reg == *val;
                     self.state.fs = reg >= *val;
                 }
                 Command::Split(dir, lable) => {
-                    let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg_mut(&Reg::En) = energy - rules.energy_for_split;
+                    let energy = *self.state.get_reg(Reg::En);
+                    *self.state.get_reg_mut(Reg::En) = energy - rules.energy_for_split;
                     if energy > rules.energy_for_split {
                         let mut new = Bot::new(self.colony_id, self.genom_id, self.genom.clone());
                         new.state = self.state.clone();
                         new.state.pc = *lable;
-                        *new.state.get_reg_mut(&Reg::Ag) = 0;
-                        *new.state.get_reg_mut(&Reg::En) = rules.energy_for_split;
+                        *new.state.get_reg_mut(Reg::Ag) = 0;
+                        *new.state.get_reg_mut(Reg::En) = rules.energy_for_split;
                         if let Err(_) = wa.spawn(dir + self.state.dir, new) {
                             self.kill();
                         }
@@ -211,14 +175,14 @@ impl Bot {
                     break;
                 }
                 Command::Forc(dir, lable) => {
-                    let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg_mut(&Reg::En) = energy - rules.energy_for_split;
+                    let energy = *self.state.get_reg(Reg::En);
+                    *self.state.get_reg_mut(Reg::En) = energy - rules.energy_for_split;
                     if energy > rules.energy_for_split {
                         let mut new = Bot::new(self.colony_id, self.genom_id, self.genom.clone());
                         new.state = self.state.clone();
                         new.state.pc = *lable;
-                        *new.state.get_reg_mut(&Reg::Ag) = 0;
-                        *new.state.get_reg_mut(&Reg::En) = rules.energy_for_split;
+                        *new.state.get_reg_mut(Reg::Ag) = 0;
+                        *new.state.get_reg_mut(Reg::En) = rules.energy_for_split;
                         new.colony_id = wa.get_new_colony_id();
                         if thread_rng().gen_bool(rules.mutation_ver) {
                             let mut genom = Vec::clone(self.genom.borrow());
@@ -239,9 +203,10 @@ impl Bot {
                     break;
                 }
                 Command::Bite(dir) => {
-                    let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg_mut(&Reg::En) =
-                        energy + wa.kill(*dir).unwrap_or(0) / rules.on_bite_energy_delimiter;
+                    let energy = *self.state.get_reg(Reg::En);
+                    *self.state.get_reg_mut(Reg::En) = energy
+                        + wa.kill(dir + self.state.dir).unwrap_or(0)
+                            / rules.on_bite_energy_delimiter;
                     break;
                 }
                 Command::Eatsun => {
@@ -270,16 +235,16 @@ impl Bot {
                     }
 
                     let energy = wa.get_sun() * rules.energy_per_sun
-                        + rules.energy_per_sun_free_boost * bro_cnt
-                        + rules.energy_per_sun_bro_boost * free_cnt
+                        + rules.energy_per_sun_bro_boost * bro_cnt
+                        + rules.energy_per_sun_free_boost * free_cnt
                         + rules.energy_per_sun_oth_boost * (DIRS.len() as isize - free_cnt);
 
-                    *self.state.get_reg_mut(&Reg::En) = energy + *self.state.get_reg(&Reg::En);
+                    *self.state.get_reg_mut(Reg::En) = energy + *self.state.get_reg(Reg::En);
                     break;
                 }
                 Command::Absorb => {
-                    let energy = *self.state.get_reg(&Reg::En);
-                    *self.state.get_reg_mut(&Reg::En) =
+                    let energy = *self.state.get_reg(Reg::En);
+                    *self.state.get_reg_mut(Reg::En) =
                         energy + wa.get_mineral() * rules.energy_per_mineral;
                     break;
                 }
@@ -290,23 +255,56 @@ impl Bot {
                     // todo!();
                 }
                 Command::Ld(rw_reg, reg) => {
-                    let val = *self.state.get_reg(reg);
-                    *self.state.get_reg_mut(&(*rw_reg).into()) = val;
+                    let val = *self.state.get_reg(*reg);
+                    *self.state.get_reg_mut((*rw_reg).into()) = val;
                 }
                 Command::Ldv(rw_reg, val) => {
-                    *self.state.get_reg_mut(&(*rw_reg).into()) = *val;
+                    *self.state.get_reg_mut((*rw_reg).into()) = *val;
+                }
+                Command::Jmp(lable) => {
+                    self.state.pc = *lable;
+                }
+                Command::Jme(lable) => {
+                    if self.state.fz {
+                        self.state.pc = *lable;
+                    }
+                }
+                Command::Jne(lable) => {
+                    if !self.state.fz {
+                        self.state.pc = *lable;
+                    }
+                }
+                Command::Jmg(lable) => {
+                    if self.state.fs && !self.state.fz {
+                        self.state.pc = *lable;
+                    }
+                }
+                Command::Jml(lable) => {
+                    if !self.state.fs && !self.state.fz {
+                        self.state.pc = *lable;
+                    }
+                }
+                Command::Jle(lable) => {
+                    if !self.state.fs || self.state.fz {
+                        self.state.pc = *lable;
+                    }
+                }
+                Command::Jge(lable) => {
+                    if self.state.fs || self.state.fz {
+                        self.state.pc = *lable;
+                    }
                 }
             };
         }
 
-        let age = *self.state.get_reg(&Reg::Ag) + 1;
-        *self.state.get_reg_mut(&Reg::Ag) = age;
+        let age = *self.state.get_reg(Reg::Ag) + 1;
+        *self.state.get_reg_mut(Reg::Ag) = age;
 
-        let energy = (*self.state.get_reg(&Reg::En)
+        let energy = (*self.state.get_reg(Reg::En)
             - rules.energy_per_step
             - age / rules.age_per_energy_penalty)
             .min(rules.max_energy);
-        *self.state.get_reg_mut(&Reg::En) = energy;
+        *self.state.get_reg_mut(Reg::En) = energy;
 
         self.is_live = self.is_live && energy > 0;
 
@@ -323,7 +321,7 @@ impl Bot {
 
     pub(super) fn kill(&mut self) -> isize {
         self.is_live = false;
-        *self.state.get_reg(&Reg::En)
+        *self.state.get_reg(Reg::En)
     }
 
     pub(super) fn get_colony(&self) -> usize {
@@ -331,19 +329,19 @@ impl Bot {
     }
 
     pub(super) fn get_energy(&self) -> isize {
-        *self.state.get_reg(&Reg::En)
+        *self.state.get_reg(Reg::En)
     }
 
     pub(super) fn set_energy(&mut self, en: isize) {
-        *self.state.get_reg_mut(&Reg::En) = en
+        *self.state.get_reg_mut(Reg::En) = en
     }
 
     pub fn get_info(&self) -> Info {
         Info {
-            age: *self.state.get_reg(&Reg::Ag) as usize,
+            age: *self.state.get_reg(Reg::Ag) as usize,
             colony_id: self.colony_id,
             genom_id: self.genom_id,
-            energy: *self.state.get_reg(&Reg::En) as usize,
+            energy: *self.state.get_reg(Reg::En) as usize,
             genom: self.genom.clone(),
         }
     }
