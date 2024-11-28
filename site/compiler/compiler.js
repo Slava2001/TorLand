@@ -134,7 +134,7 @@ function get_lables() {
 function BotLangHint(cm) {
     const cursor = cm.getCursor();
     const token = cm.getTokenAt(cursor);
-    const word = token.string.trim().toLowerCase;
+    const word = token.string.trim().toLowerCase();
     token.type = "error";
     var filtered = [];
     if (word != "") {
