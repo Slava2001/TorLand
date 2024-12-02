@@ -142,7 +142,8 @@ impl Compiler {
                         .exist_lables
                         .get(&lable_tok.orign_string.to_lowercase())
                         .context(format!("Label {} not found", lable_tok))?;
-                    *a = CommandArg::Lable(*lable_pos as Lable);
+                    let lable_pos = *lable_pos % self.gen_len as usize;
+                    *a = CommandArg::Lable(lable_pos as Lable);
                 }
             }
         }

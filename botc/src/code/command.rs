@@ -12,7 +12,7 @@ macro_rules! decl_command_enum {
     (PossibleArgs: ($($pargs:ident),*)
      Commands: $(($str_name:literal, $enum_entry:ident $(, $($args:ident),*)?)),*) => {
 
-        #[derive(Debug, serde::Serialize, serde::Deserialize)]
+        #[derive(Debug, serde::Serialize, serde::Deserialize, Eq, PartialEq)]
         pub enum CommandArg {
             $($pargs($pargs)),*
         }
@@ -47,7 +47,7 @@ macro_rules! decl_command_enum {
             }
         }
 
-        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone)]
+        #[derive(Debug, serde::Serialize, serde::Deserialize, Clone, Eq, PartialEq)]
         pub enum Command {
             $($enum_entry$(($($args),*))?),*
         }
