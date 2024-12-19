@@ -24,5 +24,8 @@ cargo build --release
 .\target\release\torlandbin
 ```
 
+### NiLang
+Так же вы можете использовать высокоуровневый язык программирвания ботов - NiLang ([ссылка на проект](https://github.com/nikonru/NiLang)).
+
 ### Участие:
 Мы приветствуем вклад сообщества! Если у вас есть идеи для улучшения, создавайте issue или отправляйте pull request.
