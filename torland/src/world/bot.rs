@@ -294,6 +294,8 @@ impl Bot {
                         self.state.pc = *lable;
                     }
                 }
+                Command::Ldr(_, _reg) => {},
+                Command::Ldm(_rw_reg, _) => {},
             };
         }
 

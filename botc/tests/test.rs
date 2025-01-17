@@ -32,6 +32,8 @@ fn compile_test() {
         Command::Ret,
         Command::Ld(RwReg::Ax, Reg::En),
         Command::Ldv(RwReg::Cx, 321),
+        Command::Ldr(3, Reg::Ax),
+        Command::Ldm(RwReg::Bx, 4)
     ];
     let text_code: &str = r#"
         start:
@@ -63,6 +65,8 @@ fn compile_test() {
         ret
         ld Ax En
         ldv Cx 321
+        ldr [3] Ax
+        ldm Bx [4]
         end:
     "#;
     let comtiled = compiler::compile(text_code.into()).unwrap();

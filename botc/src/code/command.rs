@@ -1,6 +1,6 @@
 use anyhow::{bail, Error};
 
-use super::{Dir, Lable, Reg, RwReg, Val};
+use super::{Dir, Lable, Mem, Reg, RwReg, Val};
 use crate::{
     decl_tokens_enum,
     token::{FromTokenStream, TokenStream},
@@ -137,7 +137,7 @@ macro_rules! Command_to_Expr_convertor {
 
 decl_command_enum! {
     PossibleArgs:
-        (Dir, Lable, Reg, RwReg, Val)
+        (Dir, Lable, Reg, RwReg, Val, Mem)
     Commands:
         ("nop",    Nop                 ),
         ("mov",    Mov,    Dir         ),
@@ -161,10 +161,12 @@ decl_command_enum! {
         ("split",  Split,  Dir,   Lable),
         ("forc",   Forc,   Dir,   Lable),
         ("bite",   Bite,   Dir         ),
-        ("eatsun", Eatsun              ),   
-        ("absorb", Absorb              ),    
+        ("eatsun", Eatsun              ),
+        ("absorb", Absorb              ),
         ("call",   Call,   Lable       ),
         ("ret",    Ret                 ),
         ("ld",     Ld,     RwReg, Reg  ),
-        ("ldv",    Ldv,    RwReg, Val  )
+        ("ldv",    Ldv,    RwReg, Val  ),
+        ("ldr",    Ldr,    Mem,   Reg  ),
+        ("ldm",    Ldm,    RwReg, Mem  )
 }

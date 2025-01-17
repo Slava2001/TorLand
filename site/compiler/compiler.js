@@ -28,6 +28,8 @@ const KEYWORDS = {
         'ret': [],
         'ld': ['RwReg', 'Reg'],
         'ldv': ['RwReg', 'Val'],
+        'ldr': ['Mem', 'Reg'],
+        'ldm': ['RwReg', 'Mem'],
     },
     'Dir': {
         'values': ['front', 'frontright', 'right', 'backright', 'back', 'backleft', 'left', 'frontleft'],
@@ -48,6 +50,10 @@ const KEYWORDS = {
     'Val': {
         'parser': ValParser,
         'type': 'number'
+    },
+    'Mem': {
+        'parser': MemParser,
+        'type': 'number'
     }
 };
 const COMMANDS = Object.keys(KEYWORDS.commands);
@@ -59,6 +65,13 @@ const LABLE_REGEX = /^[A-Za-z_]+[A-Za-z0-9_]*:$/;
 function ValParser(stream, state) {
     if (/^[+-]?[0-9]*$/.test(stream.current())) {
         return KEYWORDS['Val'].type;
+    }
+    return 'error';
+}
+
+function MemParser(stream, state) {
+    if (/^[[]{1}[0-9]+[]]{1}$/.test(stream.current())) {
+        return KEYWORDS['Mem'].type;
     }
     return 'error';
 }
@@ -139,11 +152,11 @@ function BotLangHint(cm) {
     var filtered = [];
     if (word != "") {
         filtered = COMMANDS.filter(s => s.startsWith(word) && s != word);
-        filtered = filtered.concat(REGS.filter(s => s.toLowerCase().startsWith(word) 
+        filtered = filtered.concat(REGS.filter(s => s.toLowerCase().startsWith(word)
                                                     && s.toLowerCase() != word));
-        filtered = filtered.concat(DIRS.filter(s => s.toLowerCase().startsWith(word) 
+        filtered = filtered.concat(DIRS.filter(s => s.toLowerCase().startsWith(word)
                                                     && s.toLowerCase() != word));
-        filtered = filtered.concat(get_lables().filter(s => s.toLowerCase().startsWith(word) 
+        filtered = filtered.concat(get_lables().filter(s => s.toLowerCase().startsWith(word)
                                                     && s.toLowerCase() != word));
     }
 
