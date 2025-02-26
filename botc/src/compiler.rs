@@ -184,19 +184,6 @@ impl Compiler {
     fn parse_directive(&mut self, toks: &mut TokenStream) -> Result<()> {
         let (directive, _) = toks.next()?;
         match &directive.orign_string.to_lowercase().as_str()[1..] {
-            "len" => {
-                ensure!(
-                    self.gen_len == -1,
-                    "len directive redefined at {}",
-                    directive
-                );
-                let (len, _) = toks.next()?;
-                self.gen_len = len
-                    .orign_string
-                    .parse::<usize>()
-                    .context(format!("Failed to parse {} as usize", len))?
-                    as isize;
-            }
             "mem_size" => {
                 ensure!(
                     self.mem_size == -1,
@@ -208,6 +195,19 @@ impl Compiler {
                     .orign_string
                     .parse::<usize>()
                     .context(format!("Failed to parse {} as usize", size))?
+                    as isize;
+            }
+            "len" => {
+                ensure!(
+                    self.gen_len == -1,
+                    "len directive redefined at {}",
+                    directive
+                );
+                let (len, _) = toks.next()?;
+                self.gen_len = len
+                    .orign_string
+                    .parse::<usize>()
+                    .context(format!("Failed to parse {} as usize", len))?
                     as isize;
             }
             _ => bail!("Unexpected directive {}", directive),
