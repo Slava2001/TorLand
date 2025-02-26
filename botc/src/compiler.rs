@@ -50,6 +50,7 @@ struct Compiler {
     exist_lables: HashMap<String, usize>,
     commands: Vec<Expr>,
     gen_len: isize,
+    mem_size: isize,
 }
 
 impl Compiler {
@@ -58,6 +59,7 @@ impl Compiler {
             exist_lables: HashMap::new(),
             commands: Vec::new(),
             gen_len: -1,
+            mem_size: -1,
         }
     }
 
@@ -133,6 +135,30 @@ impl Compiler {
             }
         }
 
+        // mem size check
+        if self.mem_size >= 0 {
+            if let Some(addr) = self
+                .commands
+                .iter()
+                .map(|c| c.args.iter())
+                .flatten()
+                .find(|a| {
+                    if let CommandArg::Mem(m) = a {
+                        *m < (self.mem_size as u64)
+                    } else {
+                        false
+                    }
+                })
+            {
+                bail!(
+                    "The memory address argument of one of the commands is outside the \
+                     specified limits: address [{}] not in 0..{}",
+                    addr,
+                    self.mem_size
+                );
+            }
+        }
+
         // label resoling
         for c in self.commands.iter_mut() {
             for a in c.args.iter_mut() {
@@ -169,6 +195,19 @@ impl Compiler {
                     .orign_string
                     .parse::<usize>()
                     .context(format!("Failed to parse {} as usize", len))?
+                    as isize;
+            }
+            "mem_size" => {
+                ensure!(
+                    self.mem_size == -1,
+                    "mem_size directive redefined at {}",
+                    directive
+                );
+                let (size, _) = toks.next()?;
+                self.mem_size = size
+                    .orign_string
+                    .parse::<usize>()
+                    .context(format!("Failed to parse {} as usize", size))?
                     as isize;
             }
             _ => bail!("Unexpected directive {}", directive),
