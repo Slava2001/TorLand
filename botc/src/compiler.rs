@@ -43,7 +43,7 @@ pub fn decompile(code: Vec<Command>) -> Vec<String> {
     res
 }
 
-const DIRECTIVE_REGEX: &str = "^#[a-zA-Z]*$";
+const DIRECTIVE_REGEX: &str = "^#[a-zA-Z_]*$";
 const LINE_COMMENTS_START: &'static str = "//";
 
 struct Compiler {
@@ -184,19 +184,6 @@ impl Compiler {
     fn parse_directive(&mut self, toks: &mut TokenStream) -> Result<()> {
         let (directive, _) = toks.next()?;
         match &directive.orign_string.to_lowercase().as_str()[1..] {
-            "mem_size" => {
-                ensure!(
-                    self.mem_size == -1,
-                    "mem_size directive redefined at {}",
-                    directive
-                );
-                let (size, _) = toks.next()?;
-                self.mem_size = size
-                    .orign_string
-                    .parse::<usize>()
-                    .context(format!("Failed to parse {} as usize", size))?
-                    as isize;
-            }
             "len" => {
                 ensure!(
                     self.gen_len == -1,
@@ -208,6 +195,19 @@ impl Compiler {
                     .orign_string
                     .parse::<usize>()
                     .context(format!("Failed to parse {} as usize", len))?
+                    as isize;
+            }
+            "mem_size" => {
+                ensure!(
+                    self.mem_size == -1,
+                    "mem_size directive redefined at {}",
+                    directive
+                );
+                let (size, _) = toks.next()?;
+                self.mem_size = size
+                    .orign_string
+                    .parse::<usize>()
+                    .context(format!("Failed to parse {} as usize", size))?
                     as isize;
             }
             _ => bail!("Unexpected directive {}", directive),
