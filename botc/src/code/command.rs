@@ -159,7 +159,7 @@ decl_command_enum! {
         ("chk",    Chk,    Dir         ),
         ("cmpv",   Cmpv,   Reg,   Val  ),
         ("split",  Split,  Dir,   Lable),
-        ("forc",   Forc,   Dir,   Lable),
+        ("fork",   Fork,   Dir,   Lable),
         ("bite",   Bite,   Dir         ),
         ("eatsun", Eatsun              ),
         ("absorb", Absorb              ),

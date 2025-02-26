@@ -20,7 +20,7 @@ const KEYWORDS = {
         'chk': ['Dir'],
         'cmpv': ['Reg', 'Val'],
         'split': ['Dir', 'Lable'],
-        'forc': ['Dir', 'Lable'],
+        'fork': ['Dir', 'Lable'],
         'bite': ['Dir'],
         'eatsun': [],
         'absorb': [],

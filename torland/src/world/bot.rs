@@ -93,6 +93,7 @@ impl Bot {
         }
 
         for _ in 0..rules.max_commands_per_cycle {
+
             let cmd = &self.genom[self.state.pc];
             self.state.pc = (self.state.pc + 1).rem_euclid(self.genom.len());
             match cmd {
@@ -174,7 +175,7 @@ impl Bot {
                     }
                     break;
                 }
-                Command::Forc(dir, lable) => {
+                Command::Fork(dir, lable) => {
                     let energy = *self.state.get_reg(Reg::En);
                     *self.state.get_reg_mut(Reg::En) = energy - rules.energy_for_split;
                     if energy > rules.energy_for_split {

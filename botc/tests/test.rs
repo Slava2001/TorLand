@@ -24,7 +24,7 @@ fn compile_test() {
         Command::Chk(Dir::Back),
         Command::Cmpv(Reg::Ax, 123),
         Command::Split(Dir::Front, 0),
-        Command::Forc(Dir::Front, 0),
+        Command::Fork(Dir::Front, 0),
         Command::Bite(Dir::Right),
         Command::Eatsun,
         Command::Absorb,
@@ -57,7 +57,7 @@ fn compile_test() {
         chk Back
         cmpv Ax 123
         split Front start
-        forc Front end
+        fork Front end
         bite Right
         eatsun
         absorb
