@@ -144,7 +144,7 @@ impl Compiler {
                 .flatten()
                 .find(|a| {
                     if let CommandArg::Mem(m) = a {
-                        *m < (self.mem_size as u64)
+                        *m >= (self.mem_size as u64)
                     } else {
                         false
                     }
