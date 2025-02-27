@@ -6,44 +6,50 @@
     <title>wdrop</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <link rel="stylesheet" type="text/css" href="compiler.css">
+    <link rel="stylesheet" type="text/css" href="../css/flag-icon.min.css">
+
+    <script type="text/javascript" src="../js/jquerry-3.7.1.min.js"></script>
+    <script type="text/javascript" src="../js/header.js"></script>
+    <script type="text/javascript" src="../js/language.js"></script>
+
+    <script type="text/javascript">
+        window.onload = function(event){
+            setHeader()
+
+            var userLang = navigator.language || navigator.userLanguage; 
+            userLang = userLang.substring(0,2)
+
+            updateLanguage(userLang)
+        }
+    </script>
 </head>
 
 <body>
-    <header>
-        <div class="container">
-            <div class="github_link" onclick='location.href="https://github.com/Slava2001"'>
-                <div class="github_link_img">
-                    <img alt="" src="https://avatars.githubusercontent.com/u/45189467?v=4">
-                </div>
-                <div class="github_link_text">
-                    <p>GitHub/Slava</p>
-                </div>
-            </div>
-
-            <div class="menu">
-                <ul>
-                    <li><a href="/">Главная</a></li>
-                    <li><a href="/compiler">Компилятор</a></li>
-                </ul>
-            </div>
-
-        </div>
-    </header>
+    <header id="header"></header>
     <section>
         <div class="container">
             <div class="compile_ctl">
-                <label for="bot_code">Bot:</label>
+                <label for="bot_code">
+                    <span lang="en">Bot code:</span>
+                    <span lang="ru">Код бота:</span>
+                </label>
                 <input type="text" id="bot_code" name="bot_code" value="">
-                <button id="decompile_btn">Декомпилировать</button>
+                <button id="decompile_btn">
+                    <span lang="en">Decompile</span>
+                    <span lang="ru">Декомпилировать</span>
+                </button>
                 <br>
                 <select id="theme_selector" onchange="editor.setOption('theme', this.value)">
                     <option value="dracula">Dracula</option>
-                    <option value="default">Стандартная</option>
+                    <option value="default">Default</option>
                     <option value="eclipse">Eclipse</option>
                     <option value="monokai">Monokai</option>
                     <option value="night">Night</option>
                 </select>
-                <button id="compile_btn">Компилировать</button><br>
+                <button id="compile_btn">
+                    <span lang="en">Compile</span>
+                    <span lang="ru">Компилировать</span>
+                </button><br>
             </div>
             <div class="compile_textarea">
                 <div class="input_container">
