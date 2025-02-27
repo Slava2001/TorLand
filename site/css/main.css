@@ -1,7 +1,25 @@
+@font-face {
+    font-family: Rubik;
+    src: url('fonts/Rubik-Regular.ttf'),
+         url('fonts/Rubik-Bold.ttf'),
+         url('fonts/Rubik-BoldItalic.ttf'),
+         url('fonts/Rubik-ExtraBold.ttf'),
+         url('fonts/Rubik-ExtraBoldItalic.ttf'),
+         url('fonts/Rubik-Italic.ttf'),
+         url('fonts/Rubik-LightItalic.ttf'),
+         url('fonts/Rubik-Medium.ttf'),
+         url('fonts/Rubik-MediumItalic.ttf'),
+         url('fonts/Rubik-Black.ttf'),
+         url('fonts/Rubik-SemiBold.ttf'),
+         url('fonts/Rubik-SemiBoldItalic.ttf'),
+         url('fonts/Rubik-BlackItalic.ttf');
+}
+  
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Rubik';
 }
  
 header {
