@@ -14,12 +14,14 @@ function selectLanguage(language) {
 
 function updateLanguage(language) {
     languageSelector = document.getElementById("language_selector")
-    
+
     if (language == "ru") {
         selectLanguage("ru")
 
         setFlagGrey("us_flag")
         setFlagColorful("ru_flag")
+
+        setCookie('language', "ru", 7);
 
         colerId = "coler_ru"
         actionId = "action_ru"
@@ -31,6 +33,8 @@ function updateLanguage(language) {
         setFlagGrey("ru_flag")
         setFlagColorful("us_flag")
 
+        setCookie('language', "en", 7);
+
         colerId = "coler_en"
         actionId = "action_en"
         startLabel = "Start"
@@ -38,12 +42,12 @@ function updateLanguage(language) {
     }
 };
 
-function setFlagGrey(flag){
+function setFlagGrey(flag) {
     element = document.getElementById(flag)
     element.style.filter = "grayscale(100%)"
 }
 
-function setFlagColorful(flag){
+function setFlagColorful(flag) {
     element = document.getElementById(flag)
     element.style.filter = "grayscale(0%)"
 }

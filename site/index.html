@@ -12,16 +12,10 @@
     <script type="text/javascript" src="js/jquerry-3.7.1.min.js"></script>
     <script type="text/javascript" src="js/header.js"></script>
     <script type="text/javascript" src="js/language.js"></script>
+    <script type="text/javascript" src="js/cookies.js"></script>
 
     <script type="text/javascript">
-        window.onload = function(event){
-            setHeader()
-
-            var userLang = navigator.language || navigator.userLanguage; 
-            userLang = userLang.substring(0,2)
-
-            updateLanguage(userLang)
-        }
+        window.onload = onLoad
     </script>
 </head>
 
@@ -30,7 +24,7 @@
 
     <section>
         <div class="container">
-            <div class = "world">
+            <div class="world">
                 <canvas id="canvas" height="10" width="10"></canvas>
                 <div class="controls">
                     <textarea id="init_cfg">{
@@ -101,7 +95,8 @@
                         <span lang="en">Bot code:</span>
                         <span lang="ru">Код бота:</span>
                     </label>
-                    <input type="text" id="bot_code" name="bot_code" value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                    <input type="text" id="bot_code" name="bot_code"
+                        value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
                 </div>
             </div>
         </div>
@@ -116,7 +111,7 @@
             const init_cfg = document.getElementById("init_cfg");
             const lmb_action = document.getElementById(actionId);
             const start_btn = document.getElementById("start_btn");
-            
+
             let background;
             let world;
             let timer;
@@ -136,7 +131,7 @@
             function update() {
                 world.update();
                 render_word();
-                timer = setTimeout(update, 1000/fps.value);
+                timer = setTimeout(update, 1000 / fps.value);
             }
 
             function run() {
@@ -145,7 +140,7 @@
                 world_size_y = cfg["height"];
                 try {
                     world = WorldWraper.new(init_cfg.value);
-                } catch(e) {
+                } catch (e) {
                     alert(e);
                     return
                 }

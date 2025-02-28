@@ -7,21 +7,15 @@
     <link rel="stylesheet" type="text/css" href="../css/main.css">
     <link rel="stylesheet" type="text/css" href="compiler.css">
     <link rel="stylesheet" type="text/css" href="../css/pico/pico.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/flag-icon.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/flag-icon.min.css">
 
-    <script type="text/javascript" src="../js/jquerry-3.7.1.min.js"></script>
-    <script type="text/javascript" src="../js/header.js"></script>
-    <script type="text/javascript" src="../js/language.js"></script>
+    <script type="text/javascript" src="/js/jquerry-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/header.js"></script>
+    <script type="text/javascript" src="/js/language.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
 
     <script type="text/javascript">
-        window.onload = function(event){
-            setHeader()
-
-            var userLang = navigator.language || navigator.userLanguage; 
-            userLang = userLang.substring(0,2)
-
-            updateLanguage(userLang)
-        }
+        window.onload = onLoad
     </script>
 </head>
 
