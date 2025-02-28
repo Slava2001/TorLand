@@ -1,11 +1,11 @@
 @font-face {
     font-family: Hermit;
-    src: url('../css/fonts/Hermit-Regular.otf'),
-         url('../css/fonts/Hermit-Bold.otf'),
-         url('../css/fonts/Hermit-Light.otf'),
-         url('../css/fonts/Hermit-LightItalic.otf'),
-         url('../css/fonts/Hermit-RegularItalic.otf'),
-         url('../css/fonts/Hermit-BoldItalic.otf');
+    src: url('/css/fonts/Hermit-Regular.otf'),
+         url('/css/fonts/Hermit-Bold.otf'),
+         url('/css/fonts/Hermit-Light.otf'),
+         url('/css/fonts/Hermit-LightItalic.otf'),
+         url('/css/fonts/Hermit-RegularItalic.otf'),
+         url('/css/fonts/Hermit-BoldItalic.otf');
 }
 
 .CodeMirror {
@@ -21,7 +21,7 @@
     font-family: Hermit;
 }
 
-section .container {
+/* section .container {
     height: 100%;
     margin-left: 10%;
     margin-right: 10%;
@@ -69,4 +69,4 @@ section .container {
     resize: none;
     width: 100%;
     height: 100%;
-}
+} */

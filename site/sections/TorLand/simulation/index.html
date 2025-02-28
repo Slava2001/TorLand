@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>wdrop</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+    <link rel="stylesheet" type="text/css" href="/css/pico/pico.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/flag-icon.min.css">
+
+    <script type="text/javascript" src="/js/jquerry-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/page.js"></script>
+    <script type="text/javascript" src="/js/language.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+
+    <script type="text/javascript">
+        window.onload = onLoad
+    </script>
+</head>
+
+<body>
+    <header id="header"></header>
+
+    <section>
+        <div class="container">
+            <div class="world">
+                <canvas id="canvas" height="10" width="10"></canvas>
+                <div class="controls">
+                    <textarea id="init_cfg">{
+    "sun_max_lvl": 10,
+    "mineral_max_lvl": 10,
+    "height": 200,
+    "width": 200,
+    "word_type": "Clustered",
+    "cluster_cnt": 20,
+    "rules": {
+        "max_commands_per_cycle": 10,
+        "energy_for_split": 1000,
+        "energy_per_sun": 10,
+        "energy_per_mineral": 10,
+        "energy_per_step": 50,
+        "age_per_energy_penalty": 100,
+        "start_energy": 100,
+        "on_bite_energy_delimiter": 10,
+        "max_energy": 10000,
+        "max_random_value": 10000,
+        "mutation_ver": 0.1,
+        "energy_per_sun_free_boost": 5,
+        "energy_per_sun_bro_boost": 10,
+        "energy_per_sun_oth_boost": -2
+    }
+}</textarea><br>
+                    <button id="create_word">
+                        <span lang="en">Create</span>
+                        <span lang="ru">Создать</span>
+                    </button><br>
+                    <button id="start_btn">
+                        <span lang="en">Start</span>
+                        <span lang="ru">Старт</span>
+                    </button>
+                    <label for="fps">FPS:</label>
+                    <input type="number" id="fps" name="fps" min="1" max="1000" value="100">
+                    <label for="coler_ru" lang="ru">Режим отрисовки: </label>
+                    <select id="coler_ru" lang="ru">
+                        <option value="0">Колония</option>
+                        <option value="1">Геном</option>
+                        <option value="2">Возраст</option>
+                        <option value="3">Энергия</option>
+                        <option value="4">Красный</option>
+                        <option value="5">Зелёный</option>
+                        <option value="6">Синий</option>
+                    </select><br>
+                    <label for="coler_en" lang="en">Drawing mode: </label>
+                    <select id="coler_en" lang="en">
+                        <option value="0">Colony</option>
+                        <option value="1">Genome</option>
+                        <option value="2">Age</option>
+                        <option value="3">Energy</option>
+                        <option value="4">Red</option>
+                        <option value="5">Green</option>
+                        <option value="6">Blue</option>
+                    </select><br>
+                    <label for="action_ru" lang="ru">ЛКМ: </label>
+                    <select id="action_ru">
+                        <option value="place">Создать бота</option>
+                        <option value="take">Захватить геном</option>
+                    </select>
+                    <label for="action_en" lang="en">LMB: </label>
+                    <select id="action_en" lang="en">
+                        <option value="place">Create a bot</option>
+                        <option value="take">Catch a genome</option>
+                    </select>
+                    <label for="bot_code">
+                        <span lang="en">Bot code:</span>
+                        <span lang="ru">Код бота:</span>
+                    </label>
+                    <input type="text" id="bot_code" name="bot_code"
+                        value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                </div>
+            </div>
+        </div>
+        <script type="module">
+            import init, { WorldWraper } from '/torland/torland.js';
+            init();
+
+            const canvas = document.getElementById("canvas");
+            const bot_code = document.getElementById("bot_code");
+            const fps = document.getElementById("fps");
+            const coler = document.getElementById(colerId);
+            const init_cfg = document.getElementById("init_cfg");
+            const lmb_action = document.getElementById(actionId);
+            const start_btn = document.getElementById("start_btn");
+
+            let background;
+            let world;
+            let timer;
+            let world_size_x;
+            let world_size_y;
+
+            function render_word() {
+                canvas.getContext("2d").drawImage(background, 0, 0);
+                world.draw(canvas.getContext("2d"), coler.value);
+            }
+            coler.onchange = () => {
+                if (world) {
+                    render_word();
+                }
+            }
+
+            function update() {
+                world.update();
+                render_word();
+                timer = setTimeout(update, 1000 / fps.value);
+            }
+
+            function run() {
+                let cfg = JSON.parse(init_cfg.value);
+                world_size_x = cfg["width"];
+                world_size_y = cfg["height"];
+                try {
+                    world = WorldWraper.new(init_cfg.value);
+                } catch (e) {
+                    alert(e);
+                    return
+                }
+                canvas.height = world_size_y;
+                canvas.width = world_size_x;
+                world.draw_bg(canvas.getContext("2d"));
+                background = new Image();
+                background.src = canvas.toDataURL();
+                clearTimeout(timer);
+                start_btn.innerHTML = startLabel;
+            }
+            document.getElementById("create_word").onclick = run;
+
+            function on_click(e) {
+                if (!world) {
+                    return;
+                }
+                const rect = canvas.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) * world_size_x / rect.width);
+                const y = Math.floor((e.clientY - rect.top) * world_size_y / rect.height);
+                if (lmb_action.value == "place") {
+                    world.spawn(x, y, bot_code.value);
+                    render_word();
+                } else {
+                    bot_code.value = world.get_bot(x, y);
+                }
+            }
+            canvas.onclick = on_click
+
+            function on_start_btn_click(e) {
+                if (!world) {
+                    return;
+                }
+                if (start_btn.innerHTML == startLabel) {
+                    start_btn.innerHTML = stopLabel;
+                    clearTimeout(timer);
+                    update();
+                } else {
+                    start_btn.innerHTML = startLabel;
+                    clearTimeout(timer);
+                }
+            }
+            start_btn.onclick = on_start_btn_click
+        </script>
+    </section>
+    <footer id="footer"></footer>
+</body>
+
+</html>
