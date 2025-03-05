@@ -63,21 +63,23 @@ function getHeader() {
               </details>
             </li>
             <li>
-                <button onclick="updateLanguage('ru')" class="secondary">
-                    <span class="flag-icon flag-icon-ru" id="ru_flag"></span>
-                    Русский
-                </button>
-                <button onclick="updateLanguage('en')" class="secondary">
-                    <span class="flag-icon flag-icon-us" id="us_flag"></span>
-                    English
-                </button>
+                <div style="display: flex; justify-content: center; flex-direction: column; font-size: 60%">
+                    <button onclick="updateLanguage('ru')" class="secondary" style="height: 25px; font-size: 90%; text-align: center;">
+                        <span class="flag-icon flag-icon-ru" id="ru_flag""></span>
+                        Русский
+                    </button>
+                    <button onclick="updateLanguage('en')" class="secondary" style="height: 25px; font-size: 90%; text-align: center;">
+                        <span class="flag-icon flag-icon-us" id="us_flag"></span>
+                        English
+                    </button>
+                </div>
             </li>
         </ul>
     </nav>
      `
 }
 
-function getFooter(){
+function getFooter() {
     return `
         <section style="display: flex; justify-content: center;">
             <p>email: slavakaplya20011501@gmail.com</p>        
