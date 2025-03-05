@@ -25,11 +25,11 @@ function initPage() {
 function getHeader() {
     return `
     <nav>
-        <ul class="github_link">
-            <a href="https://github.com/Slava2001">
-                <img alt="" src="/svg/github.svg">
+        <ul class="github_link responsive_container" style="margin-left:10px;">
+            <a href="https://github.com/Slava2001", style="margin-right:-25px;">
+                <img width="70%" height="70%" src="/svg/github.svg" style="vertical-align:middle">
             </a>
-            <p>GitHub</p>
+            <span>GitHub</span>
         </ul>
 
         <ul>
