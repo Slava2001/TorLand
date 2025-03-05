@@ -27,3 +27,11 @@
 .responsive_container:hover {
     transform: scale(1.15, 1.15);
 }
+
+.humble,
+.humble:hover,
+.humble:visited,
+.humble:active {
+    color: inherit;
+    text-decoration: none;
+}

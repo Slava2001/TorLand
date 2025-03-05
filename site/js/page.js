@@ -34,15 +34,15 @@ function getHeader() {
 
         <ul>
             <li>
-                <button>
-                <a href="/">
+                <button class="outline">
+                <a href="/" class="humble">
                     <span lang="en">Main</span>
                     <span lang="ru">Главная</span>
                 </a>
                 </button>
             </li>
             <li>
-              <details class="dropdown" style="margin-top: -5px;">
+              <details class="dropdown" style="margin-top: -6px;">
                 <summary>
                   TorLand
                 </summary>
