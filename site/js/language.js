@@ -21,6 +21,9 @@ function updateLanguage(language) {
         setFlagGrey("us_flag")
         setFlagColorful("ru_flag")
 
+        setButtonContrast("us_flag_btn", false)
+        setButtonContrast("ru_flag_btn", true)
+
         setCookie('language', "ru", 7);
 
         colerId = "coler_ru"
@@ -33,6 +36,9 @@ function updateLanguage(language) {
         setFlagGrey("ru_flag")
         setFlagColorful("us_flag")
 
+        setButtonContrast("ru_flag_btn", false)
+        setButtonContrast("us_flag_btn", true)
+
         setCookie('language', "en", 7);
 
         colerId = "coler_en"
@@ -44,10 +50,20 @@ function updateLanguage(language) {
 
 function setFlagGrey(flag) {
     element = document.getElementById(flag)
-    element.style.filter = "grayscale(100%)"
+    element.style.filter = "grayscale(60%)"
 }
 
 function setFlagColorful(flag) {
     element = document.getElementById(flag)
     element.style.filter = "grayscale(0%)"
+}
+
+function setButtonContrast(id, is_contrast) {
+    cls = "outline"
+    element = document.getElementById(id)
+    if (is_contrast) {
+        element.classList.add(cls)
+    } else if (element.classList.contains(cls)) {
+        element.classList.remove(cls)
+    }
 }

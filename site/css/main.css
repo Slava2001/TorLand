@@ -35,3 +35,12 @@
     color: inherit;
     text-decoration: none;
 }
+
+.language_button {
+    height: 24.5px;
+    font-size: 70%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+}

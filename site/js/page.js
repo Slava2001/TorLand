@@ -63,14 +63,14 @@ function getHeader() {
               </details>
             </li>
             <li>
-                <div style="display: flex; justify-content: center; flex-direction: column; font-size: 60%">
-                    <button onclick="updateLanguage('ru')" class="secondary" style="height: 25px; font-size: 90%; text-align: center;">
+                <div style="display: flex; justify-content: center; flex-direction: column; margin-right: 5px">
+                    <button onclick="updateLanguage('ru')" class="secondary language_button" id="ru_flag_btn">
                         <span class="flag-icon flag-icon-ru" id="ru_flag""></span>
-                        Русский
+                        &nbsp;Русский
                     </button>
-                    <button onclick="updateLanguage('en')" class="secondary" style="height: 25px; font-size: 90%; text-align: center;">
+                    <button onclick="updateLanguage('en')" class="secondary language_button" id="us_flag_btn">
                         <span class="flag-icon flag-icon-us" id="us_flag"></span>
-                        English
+                        &nbsp;English
                     </button>
                 </div>
             </li>
@@ -82,6 +82,6 @@ function getHeader() {
 function getFooter() {
     return `
         <section style="display: flex; justify-content: center;">
-            <p>email: slavakaplya20011501@gmail.com</p>        
+            <p>E-mail: slavakaplya20011501@gmail.com</p>        
         </section>`
 }
