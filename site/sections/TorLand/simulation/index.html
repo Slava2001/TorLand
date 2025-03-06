@@ -6,6 +6,7 @@
     <title>wdrop</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <link rel="stylesheet" type="text/css" href="/css/pico/pico.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/siimple-icons.css">
     <link rel="stylesheet" type="text/css" href="/css/flag-icon.min.css">
 
     <script type="text/javascript" src="/js/jquerry-3.7.1.min.js"></script>
@@ -14,7 +15,21 @@
     <script type="text/javascript" src="/js/cookies.js"></script>
 
     <script type="text/javascript">
-        window.onload = onLoad
+        window.onload = event => {
+        onLoad()
+
+        const paste = document.getElementById("paste_button");
+        paste.addEventListener("click", () => {
+            code = document.getElementById("bot_code")
+            navigator.clipboard.writeText(code.value);
+        });
+
+        const copy = document.getElementById("copy_button");
+        copy.addEventListener("click", () => {
+            code = document.getElementById("bot_code")
+            navigator.clipboard.readText(text => {code.value = text});
+        });
+    }
     </script>
 
     <script type="module" src="./world.js"></script>
@@ -203,6 +218,8 @@
                     </label>
                     <input type="text" id="bot_code" name="bot_code"
                         value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                    <i id="copy_button" class="si-copy clickable responsive_container" style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="paste_button" class="si-arrow-circle-down clickable responsive_container" style="font-size: 45px; object-fit: contain;"></i>
                 </div>
             </div>
         </div>
