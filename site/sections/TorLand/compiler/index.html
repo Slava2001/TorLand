@@ -24,34 +24,43 @@
     <header id="header"></header>
     <section>
         <div class="container">
-            <div class="compile_ctl">
-                <label for="bot_code">
-                    <span lang="en">Bot code:</span>
-                    <span lang="ru">Код бота:</span>
-                </label>
-                <input type="text" id="bot_code" name="bot_code" value="">
-                <button id="decompile_btn">
-                    <span lang="en">Decompile</span>
-                    <span lang="ru">Декомпилировать</span>
-                </button>
-                <br>
-                <select id="theme_selector" onchange="editor.setOption('theme', this.value)">
-                    <option value="dracula">Dracula</option>
-                    <option value="default">Default</option>
-                    <option value="eclipse">Eclipse</option>
-                    <option value="monokai">Monokai</option>
-                    <option value="night">Night</option>
-                </select>
-                <button id="compile_btn">
-                    <span lang="en">Compile</span>
-                    <span lang="ru">Компилировать</span>
-                </button><br>
-            </div>
-            <div class="compile_textarea">
-                <div class="input_container">
-                    <textarea id="input"></textarea>
+            <div class="grid">
+                <div>
+                    <div class="compile_ctl">
+                        <div role="group">
+                            <label for="bot_code">
+                                <span lang="en">Bot code:</span>
+                                <span lang="ru">Код бота:</span>
+                            </label>
+                            <input type="text" id="bot_code" name="bot_code" value="">
+                        </div>
+                        <select id="theme_selector" onchange="editor.setOption('theme', this.value)">
+                            <option value="dracula">Dracula</option>
+                            <option value="default">Default</option>
+                            <option value="eclipse">Eclipse</option>
+                            <option value="monokai">Monokai</option>
+                            <option value="night">Night</option>
+                        </select>
+                        <div role="group">
+                            <button id="compile_btn">
+                                <span lang="en">Compile</span>
+                                <span lang="ru">Компилировать</span>
+                            </button><br>
+                            <button id="decompile_btn" style="background-color: red;">
+                                <span lang="en">Decompile</span>
+                                <span lang="ru">Декомпилировать</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="compile_textarea">
+                        <div class="input_container">
+                            <textarea id="input"></textarea>
+                        </div>
+                    </div>
                 </div>
-                <textarea disabled id="output"></textarea><br>
+                <div>
+                    <textarea disabled id="output"></textarea>
+                </div>
             </div>
         </div>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.css">
