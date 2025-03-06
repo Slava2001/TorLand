@@ -26,10 +26,12 @@ function getHeader() {
     return `
     <nav>
         <ul class="github_link responsive_container" style="margin-left:10px;">
-            <a href="https://github.com/Slava2001", style="margin-right:-25px;">
+            <a href="https://github.com/Slava2001",  style="margin-right:-25px;">
                 <img width="70%" height="70%" src="/svg/github.svg" style="vertical-align:middle">
             </a>
-            <span>GitHub</span>
+            <a href="https://github.com/Slava2001" class="humble">
+            <span style="font-size:160%;">GitHub</span>
+            </a>
         </ul>
 
         <ul>
