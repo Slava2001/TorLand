@@ -29,8 +29,17 @@ html, body {
     --pico-color: rgb(223, 223, 223);
 } */
 
+.center-label {
+    display: flex;
+    align-items: center;
+}
+
 .responsive_container:hover {
-    transform: scale(1.1);
+    transform: scale(1.1, 1.1);
+    -ms-transform: scale(1.1, 1.1); /* IE 9 */
+    -webkit-transform: scale(1.1, 1.1); /* Safari and Chrome */
+    -o-transform: scale(1.1, 1.1); /* Opera */
+    -moz-transform: scale(1.1, 1.1); /* Firefox */
 }
 
 .humble,

@@ -24,45 +24,121 @@
     <header id="header"></header>
 
     <section>
-        <div class="grid">
+        <div class="grid" style="margin-right:25px; margin-left:25px;">
             <div class="world">
                 <canvas id="canvas" height="10" width="10"></canvas>
             </div>
-            <div class="controls">
-                <div class="grid">
-                    <div>
-                        <label>Label</label>
+            <div class="controls" >
+                <div id="init_cfg" style="overflow-y: scroll; height:35em;">
+                    <label class="center-label" lang="en">World</label>
+                    <label class="center-label" lang="ru">Мир</label>
+                    <div style="text-indent:28px;">
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">sun_max_lvl</label>
+                            <label class="center-label" lang="en" title="descriptor">sun_max_lvl</label>
+                            <input type="text" id="sun_max_lvl"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">mineral_max_lvl</label>
+                            <label class="center-label" lang="en" title="descriptor">mineral_max_lvl</label>
+                            <input type="text" id="mineral_max_lvl"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">height</label>
+                            <label class="center-label" lang="en" title="descriptor">height</label>
+                            <input type="text" id="height"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">width</label>
+                            <label class="center-label" lang="en" title="descriptor">width</label>
+                            <input type="text" id="width"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">word_type</label>
+                            <label class="center-label" lang="en" title="descriptor">word_type</label>
+                            <input type="text" id="word_type"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">cluster_cnt</label>
+                            <label class="center-label" lang="en" title="descriptor">cluster_cnt</label>
+                            <input type="text" id="cluster_cnt"></input>
+                        </div>
                     </div>
-                    <div>
-                        <input type="text"></input>
+                    <label class="center-label" lang="en">Rules</label>
+                    <label class="center-label" lang="ru">Правила</label>
+                    <div style="text-indent:28px;">
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">max_commands_per_cycle</label>
+                            <label class="center-label" lang="en" title="descriptor">max_commands_per_cycle</label>
+                            <input type="text" id="max_commands_per_cycle"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_for_split</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_for_split</label>
+                            <input type="text" id="energy_for_split"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_sun</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_sun</label>
+                            <input type="text" id="energy_per_sun"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_mineral</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_mineral</label>
+                            <input type="text" id="energy_per_mineral"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_step</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_step</label>
+                            <input type="text" id="energy_per_step"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">age_per_energy_penalty</label>
+                            <label class="center-label" lang="en" title="descriptor">age_per_energy_penalty</label>
+                            <input type="text" id="age_per_energy_penalty"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">start_energy</label>
+                            <label class="center-label" lang="en" title="descriptor">start_energy</label>
+                            <input type="text" id="start_energy"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">on_bite_energy_delimiter</label>
+                            <label class="center-label" lang="en" title="descriptor">on_bite_energy_delimiter</label>
+                            <input type="text" id="on_bite_energy_delimiter"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">max_energy</label>
+                            <label class="center-label" lang="en" title="descriptor">max_energy</label>
+                            <input type="text" id="max_energy"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">max_random_value</label>
+                            <label class="center-label" lang="en" title="descriptor">max_random_value</label>
+                            <input type="text" id="max_random_value"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">mutation_ver</label>
+                            <label class="center-label" lang="en" title="descriptor">mutation_ver</label>
+                            <input type="text" id="mutation_ver"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_sun_free_boost</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_sun_free_boost</label>
+                            <input type="text" id="energy_per_sun_free_boost"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_sun_bro_boost</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_sun_bro_boost</label>
+                            <input type="text" id="energy_per_sun_bro_boost"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">energy_per_sun_oth_boost</label>
+                            <label class="center-label" lang="en" title="descriptor">energy_per_sun_oth_boost</label>
+                            <input type="text" id="energy_per_sun_oth_boost"></input>
+                        </div>
                     </div>
                 </div>
-                <textarea id="init_cfg">
-{
-    "sun_max_lvl": 10,
-    "mineral_max_lvl": 10,
-    "height": 200,
-    "width": 200,
-    "word_type": "Clustered",
-    "cluster_cnt": 20,
-    "rules": {
-        "max_commands_per_cycle": 10,
-        "energy_for_split": 1000,
-        "energy_per_sun": 10,
-        "energy_per_mineral": 10,
-        "energy_per_step": 50,
-        "age_per_energy_penalty": 100,
-        "start_energy": 100,
-        "on_bite_energy_delimiter": 10,
-        "max_energy": 10000,
-        "max_random_value": 10000,
-        "mutation_ver": 0.1,
-        "energy_per_sun_free_boost": 5,
-        "energy_per_sun_bro_boost": 10,
-        "energy_per_sun_oth_boost": -2
-    }
-}
-                </textarea>
 
                 <div role="group">
                     <button id="create_word" style="background-color: red;">
@@ -74,46 +150,61 @@
                         <span lang="ru">Старт</span>
                     </button>
                 </div>
-                <label for="fps">FPS:</label>
-                <input type="number" id="fps" name="fps" min="1" max="1000" value="100">
-                <label for="coler_ru" lang="ru">Режим отрисовки: </label>
-                <select id="coler_ru" lang="ru">
-                    <option value="0">Колония</option>
-                    <option value="1">Геном</option>
-                    <option value="2">Возраст</option>
-                    <option value="3">Энергия</option>
-                    <option value="4">Красный</option>
-                    <option value="5">Зелёный</option>
-                    <option value="6">Синий</option>
-                </select>
-                <label for="coler_en" lang="en">Drawing mode: </label>
-                <select id="coler_en" lang="en">
-                    <option value="0">Colony</option>
-                    <option value="1">Genome</option>
-                    <option value="2">Age</option>
-                    <option value="3">Energy</option>
-                    <option value="4">Red</option>
-                    <option value="5">Green</option>
-                    <option value="6">Blue</option>
-                </select>
-                <label for="action_ru" lang="ru">ЛКМ: </label>
-                <select id="action_ru" lang="ru">
-                    <option value="place">Создать бота</option>
-                    <option value="take">Захватить геном</option>
-                </select>
-                <label for="action_en" lang="en">LMB: </label>
-                <select id="action_en" lang="en">
-                    <option value="place">Create a bot</option>
-                    <option value="take">Catch a genome</option>
-                </select>
-                <label for="bot_code">
-                    <span lang="en">Bot code:</span>
-                    <span lang="ru">Код бота:</span>
-                </label>
-                <input type="text" id="bot_code" name="bot_code"
-                    value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                <div role="group">
+                    <label for="fps" class="center-label">FPS</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <input type="number" id="fps" name="fps" min="1" max="1000" value="100">
+                    <span>&nbsp;</span>
+                    <label for="coler_ru" lang="ru" class="center-label">Режим отрисовки</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <select id="coler_ru" lang="ru">
+                        <option value="0">Колония</option>
+                        <option value="1">Геном</option>
+                        <option value="2">Возраст</option>
+                        <option value="3">Энергия</option>
+                        <option value="4">Красный</option>
+                        <option value="5">Зелёный</option>
+                        <option value="6">Синий</option>
+                    </select>
+                    <label for="coler_en" lang="en" class="center-label">Drawing mode</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <select id="coler_en" lang="en">
+                        <option value="0">Colony</option>
+                        <option value="1">Genome</option>
+                        <option value="2">Age</option>
+                        <option value="3">Energy</option>
+                        <option value="4">Red</option>
+                        <option value="5">Green</option>
+                        <option value="6">Blue</option>
+                    </select>
+                    <span>&nbsp;</span>
+                    <label for="action_ru" lang="ru" class="center-label">ЛКМ</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <select id="action_ru" lang="ru">
+                        <option value="place">Создать бота</option>
+                        <option value="take">Захватить геном</option>
+                    </select>
+                    <label for="action_en" lang="en" class="center-label">LMB</label>
+                    <span lang="en">&nbsp;</span>
+                    <span lang="en">&nbsp;</span>
+                    <select id="action_en" lang="en">
+                        <option value="place">Create a bot</option>
+                        <option value="take">Catch a genome</option>
+                    </select>
+                </div>
+                <div role="group">
+                    <label for="bot_code" class="center-label">
+                        <span lang="en">Bot's code</span>
+                        <span lang="ru">Код бота</span>
+                    </label>
+                    <input type="text" id="bot_code" name="bot_code"
+                        value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                </div>
             </div>
-
         </div>
     </section>
     <footer id="footer"></footer>
