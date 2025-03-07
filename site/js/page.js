@@ -49,18 +49,29 @@ function getHeader() {
                   TorLand
                 </summary>
                 <ul dir="rtl">
-                  <li>
-                      <a href="/sections/TorLand/simulation/index.html">
-                          <span lang="en">Simulation</span>
-                          <span lang="ru">Симуляция</span>
-                      </a>
-                  </li>
-                  <li>
-                      <a href="/sections/TorLand/compiler/index.html">
-                          <span lang="en">Compiler</span>
-                          <span lang="ru">Компилятор</span>
-                      </a>
-                  </li>
+                    <li>
+                        <a href="/sections/TorLand/about/index.html">
+                            <span lang="en">About</span>
+                            <span lang="ru">Описание</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/sections/TorLand/simulation/index.html">
+                            <span lang="en">Simulation</span>
+                            <span lang="ru">Симуляция</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/sections/TorLand/compiler/index.html">
+                            <span lang="en">Compiler</span>
+                            <span lang="ru">Компилятор</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/Slava2001/TorLand">
+                            <span>GitHub</span>
+                        </a>
+                    </li>
                 </ul>
               </details>
             </li>
