@@ -16,20 +16,20 @@
 
     <script type="text/javascript">
         window.onload = event => {
-        onLoad()
+            onLoad()
 
-        const paste = document.getElementById("paste_button");
-        paste.addEventListener("click", () => {
-            code = document.getElementById("bot_code")
-            navigator.clipboard.writeText(code.value);
-        });
+            const paste = document.getElementById("paste_button");
+            paste.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.readText().then(text => { code.value = text });
+            });
 
-        const copy = document.getElementById("copy_button");
-        copy.addEventListener("click", () => {
-            code = document.getElementById("bot_code")
-            navigator.clipboard.readText(text => {code.value = text});
-        });
-    }
+            const copy = document.getElementById("copy_button");
+            copy.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.writeText(code.value);
+            });
+        }
     </script>
 
     <script type="module" src="./world.js"></script>
@@ -43,7 +43,7 @@
             <div class="world">
                 <canvas id="canvas" height="10" width="10"></canvas>
             </div>
-            <div class="controls" >
+            <div class="controls">
                 <div id="init_cfg" style="overflow-y: scroll; height:35em;">
                     <label class="center-label" lang="en">World</label>
                     <label class="center-label" lang="ru">Мир</label>
@@ -219,8 +219,10 @@
                     </label>
                     <input type="text" id="bot_code" name="bot_code"
                         value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
-                    <i id="copy_button" class="si-copy clickable responsive_container" style="font-size: 45px; object-fit: contain;"></i>
-                    <i id="paste_button" class="si-arrow-circle-down clickable responsive_container" style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="copy_button" class="si-copy clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="paste_button" class="si-arrow-circle-down clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
                 </div>
             </div>
         </div>
