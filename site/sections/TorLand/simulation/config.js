@@ -1,6 +1,3 @@
-let canvas_max_height = 0;
-let canvas_max_width = 0;
-
 const default_sim_cfg = `
 {
     "sun_max_lvl": 10,

@@ -20,9 +20,6 @@
         window.onload = event => {
             onLoad()
 
-            canvas_max_height = Math.floor(canvas.height);
-            canvas_max_width = Math.floor(canvas.width);
-
             const paste = document.getElementById("paste_button");
             paste.addEventListener("click", () => {
                 code = document.getElementById("bot_code")
@@ -47,13 +44,13 @@
     <section>
         <div class="grid" style="margin-right:25px; margin-left:25px;">
             <div class="world">
-                <canvas id="canvas" style="width:100%;height:75vh"></canvas>
+                <canvas id="canvas" style="width:100%;height:72vh"></canvas>
             </div>
             <div class="controls">
                 <div id="init_cfg" style="overflow-y: scroll; height:44vh; margin-bottom: 1vh;">
                     <label class="center-label" lang="en">World</label>
                     <label class="center-label" lang="ru">Мир</label>
-                    <div style="text-indent:28px;">
+                    <div style="padding-left:28px;">
                         <div class="grid">
                             <label class="center-label" lang="ru" title="описание">Максимальная освещённость</label>
                             <label class="center-label" lang="en" title="descriptor">Maximal illumination</label>
@@ -87,7 +84,7 @@
                     </div>
                     <label class="center-label" lang="en">Rules</label>
                     <label class="center-label" lang="ru">Правила</label>
-                    <div style="text-indent:28px;">
+                    <div style="padding-left:28px;">
                         <div class="grid">
                             <label class="center-label" lang="ru" title="описание">Максимальное число комманд за
                                 цикл</label>
