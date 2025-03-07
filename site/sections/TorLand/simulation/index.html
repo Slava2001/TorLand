@@ -14,6 +14,8 @@
     <script type="text/javascript" src="/js/language.js"></script>
     <script type="text/javascript" src="/js/cookies.js"></script>
 
+    <script type="module" src="./world.js"></script>
+    <script type="text/javascript" src="./config.js"></script>
     <script type="text/javascript">
         window.onload = event => {
             onLoad()
@@ -29,10 +31,11 @@
                 code = document.getElementById("bot_code")
                 navigator.clipboard.writeText(code.value);
             });
+
+            init_sim_config()
         }
     </script>
 
-    <script type="module" src="./world.js"></script>
 </head>
 
 <body>
@@ -44,7 +47,7 @@
                 <canvas id="canvas" height="10" width="10"></canvas>
             </div>
             <div class="controls">
-                <div id="init_cfg" style="overflow-y: scroll; height:50vh;">
+                <div id="init_cfg" style="overflow-y: scroll; height:45vh;">
                     <label class="center-label" lang="en">World</label>
                     <label class="center-label" lang="ru">Мир</label>
                     <div style="text-indent:28px;">
@@ -160,7 +163,7 @@
                         <span lang="en">Create</span>
                         <span lang="ru">Создать</span>
                     </button>
-                    <button id="start_btn">
+                    <button id="start_btn" style="background-color: green;">
                         <span lang="en">Start</span>
                         <span lang="ru">Старт</span>
                     </button>

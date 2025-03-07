@@ -30,46 +30,6 @@ function update() {
     timer = setTimeout(update, 1000 / fps.value);
 }
 
-function get_config() {
-
-    let input = (name, default_value) => {
-        let input = document.getElementById(name)
-        if (input.value) {
-            return input.value
-        }
-        return default_value
-    }
-
-    let cfg = `
-    {
-    "sun_max_lvl": ${input("sun_max_lvl", 10)},
-    "mineral_max_lvl": ${input("mineral_max_lvl", 10)},
-    "height": ${input("height", 200)},
-    "width": ${input("width", 200)},
-    "word_type": ${input("word_type", '"Clustered"')},
-    "cluster_cnt": ${input("cluster_cnt", 20)},
-    "rules": {
-        "max_commands_per_cycle":  ${input("max_commands_per_cycle", 10)},
-        "energy_for_split":  ${input("energy_for_split", 1000)},
-        "energy_per_sun":  ${input("energy_per_sun", 10)},
-        "energy_per_mineral":  ${input("energy_per_mineral", 10)},
-        "energy_per_step":  ${input("energy_per_step", 50)},
-        "age_per_energy_penalty":  ${input("age_per_energy_penalty", 100)},
-        "start_energy":  ${input("start_energy", 100)},
-        "on_bite_energy_delimiter":  ${input("on_bite_energy_delimiter", 10)},
-        "max_energy":  ${input("max_energy", 10000)},
-        "max_random_value":  ${input("max_random_value", 10000)},
-        "mutation_ver":  ${input("mutation_ver", 0.1)},
-        "energy_per_sun_free_boost":  ${input("energy_per_sun_free_boost", 5)},
-        "energy_per_sun_bro_boost":  ${input("energy_per_sun_bro_boost", 10)},
-        "energy_per_sun_oth_boost":  ${input("energy_per_sun_oth_boost", -2)}
-        }
-    }
-    `
-
-    return cfg
-}
-
 function run() {
     let cfg = JSON.parse(get_config());
     world_size_x = cfg["width"];
@@ -112,10 +72,13 @@ function on_start_btn_click(e) {
     }
     if (start_btn.innerHTML == startLabel) {
         start_btn.innerHTML = stopLabel;
+        start_btn.style.backgroundColor = 'yellowgreen';
+
         clearTimeout(timer);
         update();
     } else {
         start_btn.innerHTML = startLabel;
+        start_btn.style.backgroundColor = 'green';
         clearTimeout(timer);
     }
 }
