@@ -31,6 +31,9 @@ function update() {
 }
 
 function run() {
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
     let cfg = JSON.parse(get_config());
 
     if (cfg["width"] > canvas_max_width) {
