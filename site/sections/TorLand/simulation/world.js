@@ -5,7 +5,6 @@ const canvas = document.getElementById("canvas");
 const bot_code = document.getElementById("bot_code");
 const fps = document.getElementById("fps");
 const coler = document.getElementById(colerId);
-const init_cfg = document.getElementById("init_cfg");
 const lmb_action = document.getElementById(actionId);
 const start_btn = document.getElementById("start_btn");
 
@@ -31,12 +30,52 @@ function update() {
     timer = setTimeout(update, 1000 / fps.value);
 }
 
+function get_config() {
+
+    let input = (name, default_value) => {
+        let input = document.getElementById(name)
+        if (input.value) {
+            return input.value
+        }
+        return default_value
+    }
+
+    let cfg = `
+    {
+    "sun_max_lvl": ${input("sun_max_lvl", 10)},
+    "mineral_max_lvl": ${input("mineral_max_lvl", 10)},
+    "height": ${input("height", 200)},
+    "width": ${input("width", 200)},
+    "word_type": ${input("word_type", '"Clustered"')},
+    "cluster_cnt": ${input("cluster_cnt", 20)},
+    "rules": {
+        "max_commands_per_cycle":  ${input("max_commands_per_cycle", 10)},
+        "energy_for_split":  ${input("energy_for_split", 1000)},
+        "energy_per_sun":  ${input("energy_per_sun", 10)},
+        "energy_per_mineral":  ${input("energy_per_mineral", 10)},
+        "energy_per_step":  ${input("energy_per_step", 50)},
+        "age_per_energy_penalty":  ${input("age_per_energy_penalty", 100)},
+        "start_energy":  ${input("start_energy", 100)},
+        "on_bite_energy_delimiter":  ${input("on_bite_energy_delimiter", 10)},
+        "max_energy":  ${input("max_energy", 10000)},
+        "max_random_value":  ${input("max_random_value", 10000)},
+        "mutation_ver":  ${input("mutation_ver", 0.1)},
+        "energy_per_sun_free_boost":  ${input("energy_per_sun_free_boost", 5)},
+        "energy_per_sun_bro_boost":  ${input("energy_per_sun_bro_boost", 10)},
+        "energy_per_sun_oth_boost":  ${input("energy_per_sun_oth_boost", -2)}
+        }
+    }
+    `
+
+    return cfg
+}
+
 function run() {
-    let cfg = JSON.parse(init_cfg.value);
+    let cfg = JSON.parse(get_config());
     world_size_x = cfg["width"];
     world_size_y = cfg["height"];
     try {
-        world = WorldWraper.new(init_cfg.value);
+        world = WorldWraper.new(get_config());
     } catch (e) {
         alert(e);
         return

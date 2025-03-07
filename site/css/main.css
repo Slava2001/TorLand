@@ -19,7 +19,8 @@
     font-family: 'Rubik';
 }
 
-html, body {
+html,
+body {
     max-width: 100%;
     overflow-x: hidden;
 }
@@ -36,10 +37,14 @@ html, body {
 
 .responsive_container:hover {
     transform: scale(1.1, 1.1);
-    -ms-transform: scale(1.1, 1.1); /* IE 9 */
-    -webkit-transform: scale(1.1, 1.1); /* Safari and Chrome */
-    -o-transform: scale(1.1, 1.1); /* Opera */
-    -moz-transform: scale(1.1, 1.1); /* Firefox */
+    -ms-transform: scale(1.1, 1.1);
+    /* IE 9 */
+    -webkit-transform: scale(1.1, 1.1);
+    /* Safari and Chrome */
+    -o-transform: scale(1.1, 1.1);
+    /* Opera */
+    -moz-transform: scale(1.1, 1.1);
+    /* Firefox */
 }
 
 .humble,
