@@ -32,10 +32,19 @@ function update() {
 
 function run() {
     let cfg = JSON.parse(get_config());
+
+    if (cfg["width"] > canvas_max_width) {
+        cfg["width"] = canvas_max_width
+    }
+    console.log(canvas_max_width)
+    if (cfg["height"] > canvas_max_height) {
+        cfg["height"] = canvas_max_height
+    }
+
     world_size_x = cfg["width"];
     world_size_y = cfg["height"];
     try {
-        world = WorldWraper.new(get_config());
+        world = WorldWraper.new(JSON.stringify(cfg));
     } catch (e) {
         alert(e);
         return

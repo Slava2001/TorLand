@@ -1,3 +1,6 @@
+let canvas_max_height = 0;
+let canvas_max_width = 0;
+
 const default_sim_cfg = `
 {
     "sun_max_lvl": 10,
@@ -39,6 +42,8 @@ function init_sim_config() {
             setCookie(name, input.value, 3);
         });
     }
+
+    set("bot_code")
 
     set("sun_max_lvl")
     set("mineral_max_lvl")

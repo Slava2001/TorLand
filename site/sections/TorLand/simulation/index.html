@@ -20,6 +20,9 @@
         window.onload = event => {
             onLoad()
 
+            canvas_max_height = Math.floor(canvas.height);
+            canvas_max_width = Math.floor(canvas.width);
+
             const paste = document.getElementById("paste_button");
             paste.addEventListener("click", () => {
                 code = document.getElementById("bot_code")
@@ -44,7 +47,7 @@
     <section>
         <div class="grid" style="margin-right:25px; margin-left:25px;">
             <div class="world">
-                <canvas id="canvas" height="10" width="10"></canvas>
+                <canvas id="canvas" style="width:100%;height:100%"></canvas>
             </div>
             <div class="controls">
                 <div id="init_cfg" style="overflow-y: scroll; height:44vh; margin-bottom: 1vh;">
