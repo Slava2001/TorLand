@@ -1,5 +1,5 @@
-const KEYWORDS = {
-    'commands': {
+const NI_KEYWORDS = {
+    'NI_COMMANDS': {
         'nop': [],
         'mov': ['Dir'],
         'rot': ['Dir'],
@@ -44,46 +44,44 @@ const KEYWORDS = {
         'type': "variable"
     },
     'Lable': {
-        'parser': LableParser,
+        'parser': ni_LableParser,
         'type': "variable"
     },
     'Val': {
-        'parser': ValParser,
+        'parser': ni_ValParser,
         'type': 'number'
     },
     'Mem': {
-        'parser': MemParser,
+        'parser': ni_MemParser,
         'type': 'number'
     }
 };
-const COMMANDS = Object.keys(KEYWORDS.commands);
-const REGS = KEYWORDS.Reg.values;
-const DIRS = KEYWORDS.Dir.values;
-const LABLE_REGEX = /^[A-Za-z_]+[A-Za-z0-9_]*:$/;
+const NI_COMMANDS = Object.keys(NI_KEYWORDS.NI_COMMANDS);
+const NI_REGS = NI_KEYWORDS.Reg.values;
+const NI_DIRS = NI_KEYWORDS.Dir.values;
 
-
-function ValParser(stream, state) {
+function ni_ValParser(stream, state) {
     if (/^[+-]?[0-9]*$/.test(stream.current())) {
-        return KEYWORDS['Val'].type;
+        return NI_KEYWORDS['Val'].type;
     }
     return 'error';
 }
 
-function MemParser(stream, state) {
+function ni_MemParser(stream, state) {
     if (/^[[]{1}[0-9]+[]]{1}$/.test(stream.current())) {
-        return KEYWORDS['Mem'].type;
+        return NI_KEYWORDS['Mem'].type;
     }
     return 'error';
 }
 
-function LableParser(stream, state) {
+function ni_LableParser(stream, state) {
     if (/^[A-Za-z_]+[A-Za-z0-9_]*$/.test(stream.current())) {
-        return KEYWORDS['Lable'].type;
+        return NI_KEYWORDS['Lable'].type;
     }
     return 'error';
 }
 
-CodeMirror.defineMode("BotLang", function () {
+CodeMirror.defineMode("NiLang", function () {
     return {
         startState: function () {
             return {
@@ -106,11 +104,11 @@ CodeMirror.defineMode("BotLang", function () {
                 // Args
                 if (state.expect_args.length > 0) {
                     exp_ty = state.expect_args.shift();
-                    if (KEYWORDS[exp_ty].parser) {
-                        return KEYWORDS[exp_ty].parser(stream, state);
+                    if (NI_KEYWORDS[exp_ty].parser) {
+                        return NI_KEYWORDS[exp_ty].parser(stream, state);
                     }
-                    if (KEYWORDS[exp_ty].values.some(x => x.toLowerCase() == word)) {
-                        return KEYWORDS[exp_ty].type;
+                    if (NI_KEYWORDS[exp_ty].values.some(x => x.toLowerCase() == word)) {
+                        return NI_KEYWORDS[exp_ty].type;
                     }
                     return "error ";
                 }
@@ -123,9 +121,9 @@ CodeMirror.defineMode("BotLang", function () {
                     return "def";
                 }
 
-                // Commands
-                if (COMMANDS.includes(word)) {
-                    state.expect_args = [...KEYWORDS.commands[word]];
+                // NI_COMMANDS
+                if (NI_COMMANDS.includes(word)) {
+                    state.expect_args = [...NI_KEYWORDS.NI_COMMANDS[word]];
                     return "keyword";
                 }
             }
@@ -136,27 +134,27 @@ CodeMirror.defineMode("BotLang", function () {
     };
 });
 
-function get_lables() {
-    let all_code = editor.getValue();
+function ni_get_lables() {
+    let all_code = nilang_editor.getValue();
     let words = all_code.split(/\s/);
     let _lables = words.filter(s => LABLE_REGEX.test(s));
     let lables = _lables.map(s => s.replace(':', ''));
     return lables;
 }
 
-function BotLangHint(cm) {
+function NiLangHint(cm) {
     const cursor = cm.getCursor();
     const token = cm.getTokenAt(cursor);
     const word = token.string.trim().toLowerCase();
     token.type = "error";
     var filtered = [];
     if (word != "") {
-        filtered = COMMANDS.filter(s => s.startsWith(word) && s != word);
-        filtered = filtered.concat(REGS.filter(s => s.toLowerCase().startsWith(word)
+        filtered = NI_COMMANDS.filter(s => s.startsWith(word) && s != word);
+        filtered = filtered.concat(NI_REGS.filter(s => s.toLowerCase().startsWith(word)
             && s.toLowerCase() != word));
-        filtered = filtered.concat(DIRS.filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(NI_DIRS.filter(s => s.toLowerCase().startsWith(word)
             && s.toLowerCase() != word));
-        filtered = filtered.concat(get_lables().filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(ni_get_lables().filter(s => s.toLowerCase().startsWith(word)
             && s.toLowerCase() != word));
     }
 
@@ -167,30 +165,30 @@ function BotLangHint(cm) {
     };
 }
 
-function botlang_init() {
-    const editor = CodeMirror.fromTextArea(document.getElementById('input'), {
+function nilang_init() {
+    const nilang_editor = CodeMirror.fromTextArea(document.getElementById('nilang_input'), {
         lineNumbers: true,
-        mode: 'BotLang',
+        mode: 'NiLang',
         theme: 'dracula',
         lineWrapping: true,
     });
-    editor.setSize("100%", "100%");
+    nilang_editor.setSize("100%", "100%");
 
-    editor.addKeyMap({
+    nilang_editor.addKeyMap({
         'Tab': function (cm) {
             const cursor = cm.getCursor();
-            const suggestions = BotLangHint(cm).list;
+            const suggestions = NiLangHint(cm).list;
             if (suggestions.length > 0) {
-                cm.showHint({ hint: BotLangHint });
+                cm.showHint({ hint: NiLangHint });
             } else {
                 cm.replaceRange('    ', cursor);
             }
         }
     });
 
-    editor.on('inputRead', function () {
-        editor.showHint({ hint: BotLangHint, completeSingle: false });
+    nilang_editor.on('inputRead', function () {
+        nilang_editor.showHint({ hint: NiLangHint, completeSingle: false });
     });
 
-    return editor
+    return nilang_editor
 }
