@@ -61,6 +61,9 @@ function run() {
     background.src = canvas.toDataURL();
     clearTimeout(timer);
     start_btn.innerHTML = startLabel;
+    start_btn.classList.remove("stop-button");
+    start_btn.classList.remove("disabled-button");
+    start_btn.classList.add("start-button");
 }
 document.getElementById("create_word").onclick = run;
 
@@ -89,13 +92,15 @@ function on_start_btn_click(e) {
     }
     if (start_btn.innerHTML == startLabel) {
         start_btn.innerHTML = stopLabel;
-        start_btn.style.backgroundColor = 'yellowgreen';
+        start_btn.classList.add("stop-button");
+        start_btn.classList.remove("start-button");
 
         clearTimeout(timer);
         update();
     } else {
         start_btn.innerHTML = startLabel;
-        start_btn.style.backgroundColor = 'green';
+        start_btn.classList.add("start-button");
+        start_btn.classList.remove("stop-button");
         clearTimeout(timer);
     }
 }

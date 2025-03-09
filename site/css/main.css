@@ -76,3 +76,23 @@ body{
 .important-button:hover{
     background-color: darkred;
 }
+
+.start-button{
+    background-color: green;
+}
+
+.start-button:hover{
+    background-color: darkgreen;
+}
+
+.stop-button{
+    background-color: yellowgreen;
+}
+
+.stop-button:hover{
+    background-color: darkcyan;
+}
+
+.disabled-button{
+    background-color: gainsboro;
+}
