@@ -170,9 +170,10 @@ function nilang_init() {
         lineNumbers: true,
         mode: 'NiLang',
         theme: 'dracula',
+        height: 'auto', 
         lineWrapping: true,
     });
-    nilang_editor.setSize("100%", "100%");
+    //nilang_editor.setSize("100%", "100%");
 
     nilang_editor.addKeyMap({
         'Tab': function (cm) {
