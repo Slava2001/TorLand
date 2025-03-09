@@ -173,7 +173,6 @@ function nilang_init() {
         height: 'auto', 
         lineWrapping: true,
     });
-    //nilang_editor.setSize("100%", "100%");
 
     nilang_editor.addKeyMap({
         'Tab': function (cm) {
