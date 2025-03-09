@@ -32,6 +32,13 @@
                 navigator.clipboard.writeText(code.value);
             });
 
+            const default_code = document.getElementById("default_genome_button");
+            default_code.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                code.value = '4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA'
+                setCookie("bot_code", code.value, 3);
+            });
+
             init_sim_config()
         }
     </script>
@@ -234,6 +241,8 @@
                     <i id="copy_button" class="si-copy clickable responsive_container"
                         style="font-size: 45px; object-fit: contain;"></i>
                     <i id="paste_button" class="si-arrow-circle-down clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="default_genome_button" class="si-dna clickable responsive_container"
                         style="font-size: 45px; object-fit: contain;"></i>
                 </div>
             </div>
