@@ -4,8 +4,7 @@ init();
 const canvas = document.getElementById("canvas");
 const bot_code = document.getElementById("bot_code");
 const fps = document.getElementById("fps");
-const coler = document.getElementById(colerId);
-const lmb_action = document.getElementById(actionId);
+
 const start_btn = document.getElementById("start_btn");
 
 let background;
@@ -16,9 +15,20 @@ let world_size_y;
 
 function render_word() {
     canvas.getContext("2d").drawImage(background, 0, 0);
+
+    const coler = document.getElementById(colerId);
     world.draw(canvas.getContext("2d"), coler.value);
 }
-coler.onchange = () => {
+
+const coler_ru = document.getElementById("coler_ru");
+coler_ru.onchange = () => {
+    if (world) {
+        render_word();
+    }
+}
+
+const coler_en = document.getElementById("coler_en");
+coler_en.onchange = () => {
     if (world) {
         render_word();
     }
@@ -61,11 +71,14 @@ function on_click(e) {
     const rect = canvas.getBoundingClientRect();
     const x = Math.floor((e.clientX - rect.left) * world_size_x / rect.width);
     const y = Math.floor((e.clientY - rect.top) * world_size_y / rect.height);
+
+    const lmb_action = document.getElementById(actionId);
     if (lmb_action.value == "place") {
         world.spawn(x, y, bot_code.value);
         render_word();
     } else {
         bot_code.value = world.get_bot(x, y);
+        setCookie("bot_code", bot_code.value, 3);
     }
 }
 canvas.onclick = on_click

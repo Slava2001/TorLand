@@ -35,6 +35,11 @@
             onLoad()
             editor = botlang_init()
             nilang_editor = nilang_init()
+
+            let bot_code = getCookie("bot_code");
+            if (bot_code) {
+                document.getElementById("bot_code").value = bot_code
+            }
         }
     </script>
 
