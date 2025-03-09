@@ -1,6 +1,6 @@
 const NI_KEYWORDS = {
     'NI_COMMANDS': {
-        'nop': [],
+        'If': [],
         'mov': ['Dir'],
         'rot': ['Dir'],
         'jmp': ['Lable'],
@@ -99,7 +99,7 @@ CodeMirror.defineMode("NiLang", function () {
             }
 
             if (stream.eatWhile(/[^\s]/)) {
-                word = stream.current().trim().toLowerCase();
+                word = stream.current().trim();
 
                 // Args
                 if (state.expect_args.length > 0) {
@@ -107,7 +107,7 @@ CodeMirror.defineMode("NiLang", function () {
                     if (NI_KEYWORDS[exp_ty].parser) {
                         return NI_KEYWORDS[exp_ty].parser(stream, state);
                     }
-                    if (NI_KEYWORDS[exp_ty].values.some(x => x.toLowerCase() == word)) {
+                    if (NI_KEYWORDS[exp_ty].values.some(x => x == word)) {
                         return NI_KEYWORDS[exp_ty].type;
                     }
                     return "error ";
@@ -145,17 +145,17 @@ function ni_get_lables() {
 function NiLangHint(cm) {
     const cursor = cm.getCursor();
     const token = cm.getTokenAt(cursor);
-    const word = token.string.trim().toLowerCase();
+    const word = token.string.trim();
     token.type = "error";
     var filtered = [];
     if (word != "") {
         filtered = NI_COMMANDS.filter(s => s.startsWith(word) && s != word);
-        filtered = filtered.concat(NI_REGS.filter(s => s.toLowerCase().startsWith(word)
-            && s.toLowerCase() != word));
-        filtered = filtered.concat(NI_DIRS.filter(s => s.toLowerCase().startsWith(word)
-            && s.toLowerCase() != word));
-        filtered = filtered.concat(ni_get_lables().filter(s => s.toLowerCase().startsWith(word)
-            && s.toLowerCase() != word));
+        filtered = filtered.concat(NI_REGS.filter(s => s.startsWith(word)
+            && s != word));
+        filtered = filtered.concat(NI_DIRS.filter(s => s.startsWith(word)
+            && s != word));
+        filtered = filtered.concat(ni_get_lables().filter(s => s.startsWith(word)
+            && s != word));
     }
 
     return {
