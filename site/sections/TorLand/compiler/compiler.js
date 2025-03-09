@@ -170,11 +170,13 @@ function BotLangHint(cm) {
 function botlang_init() {
     const editor = CodeMirror.fromTextArea(document.getElementById('input'), {
         lineNumbers: true,
+        firstLineNumber: 2,
         mode: 'BotLang',
         theme: 'dracula',
+        height: 'auto', 
         lineWrapping: true,
     });
-    editor.setSize("100%", "100%");
+    //editor.setSize("100%", "100%");
 
     editor.addKeyMap({
         'Tab': function (cm) {
