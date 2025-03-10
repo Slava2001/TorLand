@@ -107,28 +107,35 @@ body {
 
 .important-button {
     background-color: red;
+    --pico-border-color: darkred;
 }
 
 .important-button:hover {
     background-color: darkred;
+    --pico-primary-hover-border: rgb(88, 51, 23);
 }
 
 .start-button {
     background-color: green;
+    --pico-border-color: darkgreen;
 }
 
 .start-button:hover {
     background-color: darkgreen;
+    --pico-primary-hover-border: rgb(3, 65, 56);
 }
 
 .stop-button {
     background-color: yellowgreen;
+    --pico-border-color: teal;
 }
 
 .stop-button:hover {
     background-color: darkcyan;
+    --pico-primary-hover-border: rgb(3, 65, 56);
 }
 
 .disabled-button {
     background-color: gainsboro;
+    --pico-border-color: darkslategray;
 }
