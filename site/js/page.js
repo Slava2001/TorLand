@@ -94,9 +94,9 @@ function getHeader() {
 
 function getFooter() {
     return `
-        <section style="display: flex; justify-content: space-around">
-            <div></div>
-            <div>
+        <section style="display: flex; justify-content: space-between;">
+            <div style="flex: 1 1 0px;"></div>
+            <div style="flex: 1 1 0px; margin-right: 10vw">
                 <p style="display: inline">E-mail: slavakaplya20011501@gmail.com</p>  
                 <i id="main_email_copy_button" class="si-copy clickable responsive_container"
                 style="font-size: 32px; object-fit: contain;" onclick="navigator.clipboard.writeText('slavakaplya20011501@gmail.com');"></i>      
