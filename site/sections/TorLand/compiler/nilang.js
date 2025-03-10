@@ -9,38 +9,26 @@ const NI_KEYWORDS = {
         'Elif': [],
         'And': [],
         'Or': [],
-        'False': [],
-        'True': [],
         'Fun': [],
         '$': [],
+        'Return': [],
     },
     'Dir': {
         'values': ['front', 'frontright', 'right', 'backright', 'back', 'backleft', 'left', 'frontleft'],
         'type': "variable"
     },
-    'RwReg': {
-        'values': ['Ax', 'Bx', 'Cx', 'Dx'],
+    'Bools': {
+        'values': ['False', 'True'],
         'type': "variable"
     },
-    'Reg': {
-        'values': ['Ax', 'Bx', 'Cx', 'Dx', 'En', 'Ag', 'Sd', 'Md'],
+    'Types': {
+        'values': ['Int', 'Bool', 'Dir'],
         'type': "variable"
     },
-    'Lable': {
-        'parser': ni_LableParser,
-        'type': "variable"
-    },
-    'Val': {
-        'parser': ni_ValParser,
-        'type': 'number'
-    },
-    'Mem': {
-        'parser': ni_MemParser,
-        'type': 'number'
-    }
 };
 const NI_COMMANDS = Object.keys(NI_KEYWORDS.NI_COMMANDS);
-const NI_REGS = NI_KEYWORDS.Reg.values;
+const NI_TYPES = NI_KEYWORDS.Types.values;
+const NI_BOOLS = NI_KEYWORDS.Bools.values;
 const NI_DIRS = NI_KEYWORDS.Dir.values;
 
 function ni_ValParser(stream, state) {
@@ -76,7 +64,7 @@ CodeMirror.defineMode("NiLang", function () {
             if (stream.eatSpace()) {
                 return null;
             }
-            if (stream.match("//")) {
+            if (stream.match("#")) {
                 stream.skipToEnd();
                 return "comment";
             }
@@ -84,25 +72,25 @@ CodeMirror.defineMode("NiLang", function () {
             if (stream.eatWhile(/[^\s]/)) {
                 word = stream.current().trim();
 
-                // Args
-                if (state.expect_args.length > 0) {
-                    exp_ty = state.expect_args.shift();
-                    if (NI_KEYWORDS[exp_ty].parser) {
-                        return NI_KEYWORDS[exp_ty].parser(stream, state);
-                    }
-                    if (NI_KEYWORDS[exp_ty].values.some(x => x == word)) {
-                        return NI_KEYWORDS[exp_ty].type;
-                    }
-                    return "error ";
-                }
+                // // Args
+                // if (state.expect_args.length > 0) {
+                //     exp_ty = state.expect_args.shift();
+                //     if (NI_KEYWORDS[exp_ty].parser) {
+                //         return NI_KEYWORDS[exp_ty].parser(stream, state);
+                //     }
+                //     if (NI_KEYWORDS[exp_ty].values.some(x => x == word)) {
+                //         return NI_KEYWORDS[exp_ty].type;
+                //     }
+                //     return "error ";
+                // }
 
-                // Lable
-                if (LABLE_REGEX.test(word)) {
-                    if (state.lables.includes(word.slice(0, -1))) {
-                        return "error";
-                    }
-                    return "def";
-                }
+                // // Lable
+                // if (LABLE_REGEX.test(word)) {
+                //     if (state.lables.includes(word.slice(0, -1))) {
+                //         return "error";
+                //     }
+                //     return "def";
+                // }
 
                 // NI_COMMANDS
                 if (NI_COMMANDS.includes(word)) {
@@ -133,7 +121,9 @@ function NiLangHint(cm) {
     var filtered = [];
     if (word != "") {
         filtered = NI_COMMANDS.filter(s => s.startsWith(word) && s != word);
-        filtered = filtered.concat(NI_REGS.filter(s => s.startsWith(word)
+        filtered = filtered.concat(NI_TYPES.filter(s => s.startsWith(word)
+            && s != word));
+        filtered = filtered.concat(NI_BOOLS.filter(s => s.startsWith(word)
             && s != word));
         filtered = filtered.concat(NI_DIRS.filter(s => s.startsWith(word)
             && s != word));
