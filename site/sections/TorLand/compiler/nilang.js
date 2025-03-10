@@ -43,8 +43,8 @@ CodeMirror.defineMode("NiLang", function () {
             if (stream.eatWhile(/[a-zA-Z0-9_]/)) {
                 word = stream.current().trim();
 
-                const is_number = new RegExp("\\b[0-9]+\\b", "g");
-                if (word.match(is_number)) {
+                const begins_with_number = new RegExp("\\b[0-9]", "g");
+                if (word.match(begins_with_number)) {
                     return "number";
                 }
 
@@ -72,6 +72,8 @@ CodeMirror.defineMode("NiLang", function () {
                 if (word.match(does_it_begin_with_capital_letter)) {
                     return "string";
                 }
+
+                return null
             }
 
             let next = stream.next();
