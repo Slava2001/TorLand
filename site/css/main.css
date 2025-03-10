@@ -19,32 +19,25 @@
     font-family: 'Rubik';
 }
 
-/* Pink Dark scheme (Forced) */
-/* Enabled if forced with data-theme="dark" */
-
-
-/* Pink Dark scheme (Forced) */
-/* Enabled if forced with data-theme="dark" */
+/* Use this rule to customize default pico theme */
+/* For example 
 :root:not([data-theme]) {
-    --pico-primary: #43a047;
-    --pico-primary-hover: #388e3c;
-    --pico-primary-focus: rgba(67, 160, 71, 0.125);
-    --pico-primary-inverse: #FFF;
-    --pico-primary-background: #b7e9b994;
-    --pico-background-color: rgba(184, 255, 170, 0.349);
+    --pico-background-color: green; 
+    --pico-primary: red;
 }
+*/
+:root:not([data-theme]) {}
 
-/* Pink Dark scheme (Auto) */
-/* Automatically enabled if user has Dark mode enabled */
 @media only screen and (prefers-color-scheme: dark) {
+
+    /* Use this rule to customize default dark theme */
+    /* For example 
     :root:not([data-theme]) {
-        --pico-primary: #65c595;
-        --pico-primary-hover: #476861;
-        --pico-primary-focus: rgba(67, 160, 71, 0.125);
-        --pico-primary-inverse: #FFF;
-        --pico-primary-background: #1d251dfa;
-        --pico-background-color: rgb(221, 230, 225);
+        --pico-background-color: green; 
+        --pico-primary: red;
     }
+    */
+    :root:not([data-theme]) {}
 }
 
 html,
