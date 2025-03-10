@@ -25,9 +25,9 @@ body {
     overflow-x: hidden;
 }
 
-body{
-    min-height: 100vh; 
-    display: flex; 
+body {
+    min-height: 100vh;
+    display: flex;
     flex-direction: column;
 }
 
@@ -46,6 +46,21 @@ body{
     /* Opera */
     -moz-transform: scale(1.1, 1.1);
     /* Firefox */
+
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .black-img {
+        -webkit-filter: invert(100%);
+        /* safari 6.0 - 9.0 */
+        filter: invert(100%);
+    }
+
+    :root:not([data-theme]) .github-link {
+        -webkit-filter: invert(100%);
+        /* safari 6.0 - 9.0 */
+        filter: invert(100%);
+    }
 }
 
 .humble,
@@ -69,30 +84,30 @@ body{
     cursor: pointer
 }
 
-.important-button{
+.important-button {
     background-color: red;
 }
 
-.important-button:hover{
+.important-button:hover {
     background-color: darkred;
 }
 
-.start-button{
+.start-button {
     background-color: green;
 }
 
-.start-button:hover{
+.start-button:hover {
     background-color: darkgreen;
 }
 
-.stop-button{
+.stop-button {
     background-color: yellowgreen;
 }
 
-.stop-button:hover{
+.stop-button:hover {
     background-color: darkcyan;
 }
 
-.disabled-button{
+.disabled-button {
     background-color: gainsboro;
 }

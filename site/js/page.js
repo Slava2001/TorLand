@@ -25,9 +25,9 @@ function initPage() {
 function getHeader() {
     return `
     <nav>
-        <ul class="github_link responsive_container" style="margin-left:10px;">
+        <ul class="responsive_container" style="margin-left:10px;">
             <a href="https://github.com/Slava2001",  style="margin-right:-25px;">
-                <img width="70%" height="70%" src="/svg/github.svg" style="vertical-align:middle">
+                <img class="github-link" width="70%" height="70%" src="/svg/github.svg" style="vertical-align:middle">
             </a>
             <a href="https://github.com/Slava2001" class="humble">
             <span style="font-size:160%;">GitHub</span>
@@ -101,12 +101,12 @@ function getFooter() {
                 <i id="main_email_copy_button" class="si-copy clickable responsive_container"
                 style="font-size: 32px; object-fit: contain;" onclick="navigator.clipboard.writeText('slavakaplya20011501@gmail.com');"></i>      
             </div>
-            <div class="github_link responsive_container" style="margin-left:10px; display: inline; float:right;">
+            <div class="responsive_container" style="margin-left:10px; display: inline; float:right;">
                 <a href="https://github.com/nikonru/" class="humble">
                     <span style="font-size:100%; vertical-align:middle">Designed by nikonru</span>
                 </a>
                 <a href="https://github.com/nikonru/",  style="margin-right:-25px;">
-                    <img width="10%" height="10%" src="/svg/github.svg" style="vertical-align:middle">
+                    <img  class="github-link" width="10%" height="10%" src="/svg/github.svg" style="vertical-align:middle">
                 </a>
             </div>
         </section>`
