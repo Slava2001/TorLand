@@ -8,6 +8,7 @@ const NI_STATEMENTS = {
         'Continue',
         'Using',
         'Alias',
+        'Scope',
         'Fun',
         'Return',
     ],
@@ -107,16 +108,16 @@ function NiLangHint(cm) {
     token.type = "error";
     var filtered = [];
     if (word != "") {
-        filtered = NI_KEYWORDS.filter(s => s.toLowerCase().startsWith(word) && s != word);
-        filtered = filtered.concat(NI_TYPES.filter(s => s.toLowerCase().startsWith(word)
+        filtered = NI_KEYWORDS.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word)) && s != word);
+        filtered = filtered.concat(NI_TYPES.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word))
             && s != word));
-        filtered = filtered.concat(NI_BOOLS.filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(NI_BOOLS.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word))
             && s != word));
-        filtered = filtered.concat(NI_DIRS.filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(NI_DIRS.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word))
             && s != word));
-        filtered = filtered.concat(NI_LOGIC.filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(NI_LOGIC.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word))
             && s != word));
-        filtered = filtered.concat(NI_BUILTIN.filter(s => s.toLowerCase().startsWith(word)
+        filtered = filtered.concat(NI_BUILTIN.filter(s => (s.toLowerCase().startsWith(word) || s.startsWith(word))
             && s != word));
     }
 
