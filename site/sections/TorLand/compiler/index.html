@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>wdrop</title>
+    <link rel="stylesheet" type="text/css" href="/css/pico/pico.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/flag-icon.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/siimple-icons.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+
+    <link rel="stylesheet" type="text/css" href="/sections/TorLand/compiler/compiler.css">
+
+    <script type="text/javascript" src="/js/jquerry-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/page.js"></script>
+    <script type="text/javascript" src="/js/language.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+
+    <link rel="stylesheet" href="./codemirror/codemirror.css">
+    <link rel="stylesheet" href="./codemirror/show-hint.css">
+    <link rel="stylesheet" href="./codemirror/themes/night.css">
+    <link rel="stylesheet" href="./codemirror/themes/dracula.css">
+    <link rel="stylesheet" href="./codemirror/themes/eclipse.css">
+    <link rel="stylesheet" href="./codemirror/themes/monokai.css">
+
+    <script type="text/javascript" src="./codemirror/codemirror.js"></script>
+    <script type="text/javascript" src="./codemirror/show-hint.js"></script>
+    <script type="text/javascript" src="./compiler.js"></script>
+    <script type="text/javascript" src="./nilang.js"></script>
+
+    <script type="text/javascript">
+        let editor = null
+        let nilang_editor = null
+        window.onload = (event) => {
+            onLoad()
+
+            editor = botlang_init()
+            nilang_editor = nilang_init()
+
+            let bot_code = getCookie("bot_code");
+            if (bot_code) {
+                document.getElementById("bot_code").value = bot_code
+            }
+
+            const paste = document.getElementById("paste_button");
+            paste.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.readText().then(text => { code.value = text });
+            });
+
+            const copy = document.getElementById("copy_button");
+            copy.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.writeText(code.value);
+            });
+
+        }
+    </script>
+
+    <script type="module">
+        import init, { compile, decompile } from './botc/botc.js';
+        await init('./botc/botc_bg.wasm');
+        async function run() {
+            const input_code = editor.getValue();
+            if (input_code.trim() == "") {
+                document.getElementById("output").value = "Empty imput";
+                return;
+            }
+            document.getElementById("output").value = compile(input_code);
+        }
+        document.getElementById("compile_btn").addEventListener('click', run);
+
+        async function nilang_run() {
+            // TODO Use actual NiLang compiler here
+            const nilang_code = nilang_editor.getValue();
+            editor.setValue(nilang_code);
+        }
+        document.getElementById("nilang_compile_btn").addEventListener('click', nilang_run);
+
+        async function run_decompile() {
+            const output_code = decompile(document.getElementById("bot_code").value)
+            if (output_code.includes("Failed")) {
+                document.getElementById("output").value = output_code;
+            } else {
+                editor.setValue(output_code);
+            }
+        }
+        document.getElementById("decompile_btn").addEventListener('click', run_decompile);
+    </script>
+</head>
+
+<body>
+    <header id="header"></header>
+    <section>
+        <div style="padding-left: 10vw;padding-right: 10vw;">
+            <select id="theme_selector"
+                onchange="editor.setOption('theme', this.value);nilang_editor.setOption('theme', this.value)">
+                <option value="dracula">Dracula</option>
+                <option value="default">Default</option>
+                <option value="eclipse">Eclipse</option>
+                <option value="monokai">Monokai</option>
+                <option value="night">Night</option>
+            </select>
+            <div role="group">
+                <label for="bot_code">
+                    <span lang="en">Bot code</span>
+                    <span lang="ru">Код бота</span>
+                </label>
+                <input type="text" id="bot_code" name="bot_code" value="">
+                <i id="copy_button" class="si-copy clickable responsive_container"
+                    style="font-size: 45px; object-fit: contain;"></i>
+                <i id="paste_button" class="si-arrow-circle-down clickable responsive_container"
+                    style="font-size: 45px; object-fit: contain;"></i>
+                <button id="decompile_btn" class="important-button"
+                    style="margin-left: 5px; display: inline; border-top-left-radius: var(--pico-border-radius); border-bottom-left-radius: var(--pico-border-radius);">
+                    <span lang="en">Decompile</span>
+                    <span lang="ru">Декомпилировать</span>
+                </button>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <div style="padding-bottom: 5px;">
+                        <button id="nilang_compile_btn" style="display: inline">
+                            <span lang="en">Compile</span>
+                            <span lang="ru">Компилировать</span>
+                        </button>
+
+                        <div class="responsive_container" style="margin-left:10px; display: inline; float:right">
+                            <a href="https://github.com/nikonru/NiLang" class="humble">
+                                <span style="font-size:160%; vertical-align:middle">NiLang</span>
+                            </a>
+                            <a href="https://github.com/nikonru/NiLang" , style="margin-right:-25px;">
+                                <img class="github-link" width="30%" height="30%" src="/svg/github.svg"
+                                    style="vertical-align:middle">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="compile_textarea">
+                        <div class="input_container">
+                            <textarea id="nilang_input"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="compile_ctl">
+                        <div style="padding-bottom: 5px;">
+                            <button id="compile_btn" style="display: inline">
+                                <span lang="en">Compile</span>
+                                <span lang="ru">Компилировать</span>
+                            </button>
+
+                            <div class="responsive_container" style="margin-left:10px; display: inline; float:right">
+                                <a href="https://github.com/Slava2001/TorLand/blob/main/botc/bot.md" class="humble">
+                                    <span style="font-size:160%; vertical-align:middle">BotLang</span>
+                                </a>
+                                <a href="https://github.com/Slava2001/TorLand/blob/main/botc/bot.md" ,
+                                    style="margin-right:-25px;">
+                                    <img class="github-link" width="26.785%" height="26.785%" src="/svg/github.svg"
+                                        style="vertical-align:middle">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compile_textarea">
+                        <div class="input_container">
+                            <textarea id="input"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <textarea disabled id="output" style="height: 100%;"></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="flex-grow:1"></div>
+    <footer id="footer"></footer>
+</body>
+
+</html>

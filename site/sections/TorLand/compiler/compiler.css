@@ -1,0 +1,22 @@
+@font-face {
+    font-family: Hermit;
+    src: url('/css/fonts/Hermit-Regular.otf'),
+         url('/css/fonts/Hermit-Bold.otf'),
+         url('/css/fonts/Hermit-Light.otf'),
+         url('/css/fonts/Hermit-LightItalic.otf'),
+         url('/css/fonts/Hermit-RegularItalic.otf'),
+         url('/css/fonts/Hermit-BoldItalic.otf');
+}
+
+.CodeMirror {
+    height: 60vh !important;
+    width:  100%;
+}
+
+.CodeMirror * {
+    font-family: Hermit;
+}
+
+.CodeMirror-hints * {
+    font-family: Hermit;
+}

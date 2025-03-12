@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>wdrop</title>
+    <link rel="stylesheet" type="text/css" href="/css/pico/pico.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/siimple-icons.css">
+    <link rel="stylesheet" type="text/css" href="/css/flag-icon.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+
+    <script type="text/javascript" src="/js/jquerry-3.7.1.min.js"></script>
+    <script type="text/javascript" src="/js/page.js"></script>
+    <script type="text/javascript" src="/js/language.js"></script>
+    <script type="text/javascript" src="/js/cookies.js"></script>
+
+    <script type="module" src="./world.js"></script>
+    <script type="text/javascript" src="./config.js"></script>
+    <script type="text/javascript">
+        window.onload = event => {
+            onLoad()
+
+            const paste = document.getElementById("paste_button");
+            paste.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.readText().then(text => { code.value = text });
+            });
+
+            const copy = document.getElementById("copy_button");
+            copy.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                navigator.clipboard.writeText(code.value);
+            });
+
+            const default_code = document.getElementById("default_genome_button");
+            default_code.addEventListener("click", () => {
+                code = document.getElementById("bot_code")
+                code.value = '4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA'
+                setCookie("bot_code", code.value, 3);
+            });
+
+            init_sim_config()
+        }
+    </script>
+
+</head>
+
+<body>
+    <header id="header"></header>
+
+    <section >
+        <div class="grid" style="margin-right:25px; margin-left:25px;">
+            <div class="world">
+                <canvas id="canvas" style="width:100%;height:72vh"></canvas>
+            </div>
+            <div class="controls">
+                <div id="init_cfg" style="overflow-y: scroll; height:44vh; margin-bottom: 1vh;">
+                    <label class="center-label" lang="en">World</label>
+                    <label class="center-label" lang="ru">Мир</label>
+                    <div style="padding-left:28px;">
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Максимальная освещённость</label>
+                            <label class="center-label" lang="en" title="descriptor">Maximal illumination</label>
+                            <input type="text" id="sun_max_lvl"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Максимальная минерализация</label>
+                            <label class="center-label" lang="en" title="descriptor">Maximal mineralization</label>
+                            <input type="text" id="mineral_max_lvl"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Высота</label>
+                            <label class="center-label" lang="en" title="descriptor">Height</label>
+                            <input type="text" id="height"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Ширина</label>
+                            <label class="center-label" lang="en" title="descriptor">Width</label>
+                            <input type="text" id="width"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Тип мира</label>
+                            <label class="center-label" lang="en" title="descriptor">World type</label>
+                            <input type="text" id="word_type"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Число кластеров</label>
+                            <label class="center-label" lang="en" title="descriptor">Number of clusters</label>
+                            <input type="text" id="cluster_cnt"></input>
+                        </div>
+                    </div>
+                    <label class="center-label" lang="en">Rules</label>
+                    <label class="center-label" lang="ru">Правила</label>
+                    <div style="padding-left:28px;">
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Максимальное число комманд за
+                                цикл</label>
+                            <label class="center-label" lang="en" title="descriptor">Maximum number of commands per
+                                cycle</label>
+                            <input type="text" id="max_commands_per_cycle"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Рассход энергия за деление</label>
+                            <label class="center-label" lang="en" title="descriptor">Energy consumption per
+                                split</label>
+                            <input type="text" id="energy_for_split"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Энергия от Солцна</label>
+                            <label class="center-label" lang="en" title="descriptor">Energy from the Sun</label>
+                            <input type="text" id="energy_per_sun"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Энергия от минералов</label>
+                            <label class="center-label" lang="en" title="descriptor">Energy from the minerals</label>
+                            <input type="text" id="energy_per_mineral"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Рассход энергии за шаг</label>
+                            <label class="center-label" lang="en" title="descriptor">Energy consumption per step</label>
+                            <input type="text" id="energy_per_step"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Штраф к энергии за возраст</label>
+                            <label class="center-label" lang="en" title="descriptor">Penalty to energy for the
+                                age</label>
+                            <input type="text" id="age_per_energy_penalty"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Энергия на старте</label>
+                            <label class="center-label" lang="en" title="descriptor">Start energy</label>
+                            <input type="text" id="start_energy"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Поглощение энергии при укусе</label>
+                            <label class="center-label" lang="en" title="descriptor">Energy consumption with
+                                bite</label>
+                            <input type="text" id="on_bite_energy_delimiter"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Максимум энергии</label>
+                            <label class="center-label" lang="en" title="descriptor">Maximum energy</label>
+                            <input type="text" id="max_energy"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="При мутации бота может появиться команда со случайным константным аргументом, это максимальное значение такого аргумента">
+                                Максимальное случайное значение
+                            </label>
+                            <label class="center-label" lang="en" title="During mutation of a bot, a command with random constant argument may appear, this is the maximum value of such argument">
+                                Maximum random value
+                            </label>
+                            <input type="text" id="max_random_value"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Вероятность мутации</label>
+                            <label class="center-label" lang="en" title="descriptor">Mutation probability</label>
+                            <input type="text" id="mutation_ver"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Коэффициент свободного места</label>
+                            <label class="center-label" lang="en" title="descriptor">Free space coefficient</label>
+                            <input type="text" id="energy_per_sun_free_boost"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Коэффициент колонии</label>
+                            <label class="center-label" lang="en" title="descriptor">Colony coefficient</label>
+                            <input type="text" id="energy_per_sun_bro_boost"></input>
+                        </div>
+                        <div class="grid">
+                            <label class="center-label" lang="ru" title="описание">Коэффициент соседства</label>
+                            <label class="center-label" lang="en" title="descriptor">Neighbor coefficient</label>
+                            <input type="text" id="energy_per_sun_oth_boost"></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div role="group">
+                    <button id="create_word" class="important-button">
+                        <span lang="en">Create world</span>
+                        <span lang="ru">Создать мир</span>
+                    </button>
+                    <button id="start_btn" class="disabled-button">
+                        <span lang="en">Start</span>
+                        <span lang="ru">Старт</span>
+                    </button>
+                </div>
+                <div role="group">
+                    <label for="fps" class="center-label">FPS</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <input type="number" id="fps" name="fps" min="1" max="1000" value="100">
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <label for="coler_ru" lang="ru" class="center-label">Режим отрисовки</label>
+                    <span lang="ru">&nbsp;</span>
+                    <span lang="ru">&nbsp;</span>
+                    <select id="coler_ru" lang="ru">
+                        <option value="0">Колония</option>
+                        <option value="1">Геном</option>
+                        <option value="2">Возраст</option>
+                        <option value="3">Энергия</option>
+                        <option value="4">Красный</option>
+                        <option value="5">Зелёный</option>
+                        <option value="6">Синий</option>
+                    </select>
+                    <label for="coler_en" lang="en" class="center-label">Drawing mode</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <select id="coler_en" lang="en">
+                        <option value="0">Colony</option>
+                        <option value="1">Genome</option>
+                        <option value="2">Age</option>
+                        <option value="3">Energy</option>
+                        <option value="4">Red</option>
+                        <option value="5">Green</option>
+                        <option value="6">Blue</option>
+                    </select>
+                    <span>&nbsp;</span>
+                    <label for="action_ru" lang="ru" class="center-label">ЛКМ</label>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <select id="action_ru" lang="ru">
+                        <option value="place">Создать бота</option>
+                        <option value="take">Захватить геном</option>
+                    </select>
+                    <label for="action_en" lang="en" class="center-label">LMB</label>
+                    <span lang="en">&nbsp;</span>
+                    <span lang="en">&nbsp;</span>
+                    <select id="action_en" lang="en">
+                        <option value="place">Create a bot</option>
+                        <option value="take">Catch a genome</option>
+                    </select>
+                </div>
+                <div role="group">
+                    <label for="bot_code" class="center-label">
+                        <span lang="en">Bot's code</span>
+                        <span lang="ru">Код бота</span>
+                    </label>
+                    <input type="text" id="bot_code" name="bot_code"
+                        value="4XH4CCIAGAEAJQJDESCHZA2YR765OYBRD34BA23QMEFFQQ5GYN6NVZBH74PSUQLP2GSQA">
+                    <i id="copy_button" class="si-copy clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="paste_button" class="si-arrow-circle-down clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
+                    <i id="default_genome_button" class="si-dna clickable responsive_container"
+                        style="font-size: 45px; object-fit: contain;"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="flex-grow:1"></div>
+    <footer id="footer"></footer>
+</body>
+
+</html>
