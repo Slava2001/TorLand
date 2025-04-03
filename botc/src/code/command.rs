@@ -169,5 +169,18 @@ decl_command_enum! {
         ("ld",     Ld,     RwReg, Reg  ),
         ("ldv",    Ldv,    RwReg, Val  ),
         ("ldr",    Ldr,    Mem,   Reg  ),
-        ("ldm",    Ldm,    RwReg, Mem  )
+        ("ldm",    Ldm,    RwReg, Mem  ),
+        ("neg",    Neg,    RwReg       ),
+        ("add",    Add,    RwReg, Reg  ),
+        ("addv",   Addv,   RwReg, Val  ),
+        ("sub",    Sub,    RwReg, Reg  ),
+        ("subv",   Subv,   RwReg, Val  ),
+        ("mul",    Mul,    RwReg, Reg  ),
+        ("mulv",   Mulv,   RwReg, Val  ),
+        ("div",    Div,    RwReg, Reg  ),
+        ("divv",   Divv,   RwReg, Val  ),
+        ("mod",    Mod,    RwReg, Reg  ),
+        ("modv",   Modv,   RwReg, Val  ),
+        ("pow",    Pow,    RwReg, Reg  ),
+        ("powv",   Powv,   RwReg, Val  )
 }

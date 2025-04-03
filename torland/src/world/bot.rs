@@ -297,6 +297,19 @@ impl Bot {
                 }
                 Command::Ldr(_, _reg) => {},
                 Command::Ldm(_rw_reg, _) => {},
+                Command::Neg(_rw_reg) => {},
+                Command::Add(_rw_reg, _reg) => {},
+                Command::Addv(_rw_reg, _val) => {},
+                Command::Sub(_rw_reg, _reg) => {},
+                Command::Subv(_rw_reg, _val) => {},
+                Command::Mul(_rw_reg, _reg) => {},
+                Command::Mulv(_rw_reg, _val) => {},
+                Command::Div(_rw_reg, _val) => {},
+                Command::Divv(_rw_reg, _val) => {},
+                Command::Mod(_rw_reg, _reg) => {},
+                Command::Modv(_rw_reg, _val) => {},
+                Command::Pow(_rw_reg, _reg) => {},
+                Command::Powv(_rw_reg, _val) => {}
             };
         }
 
