@@ -92,6 +92,7 @@ macro_rules! decl_command_enum {
                                     match arg {
                                         CommandArg::Lable(l) => CommandArg::Lable(l % len),
                                         CommandArg::Val(v) => CommandArg::Val(v % max_val),
+                                        CommandArg::Mem(v) => CommandArg::Mem(v % max_val as u64),
                                         arg => arg
                                     }
                                 });)*)*

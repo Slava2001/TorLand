@@ -28,6 +28,8 @@ pub fn decompile(code: Vec<Command>) -> Vec<String> {
                 if let CommandArg::Lable(index) = a {
                     res.push_str(format!(" lable_{a}").as_str());
                     req_lables.push((index, format!("lable_{a}:")));
+                } else if let CommandArg::Mem(addr) = a {
+                    res.push_str(format!(" [{addr}]").as_str());
                 } else {
                     res.push_str(format!(" {a}").as_str());
                 }
