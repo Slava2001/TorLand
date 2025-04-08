@@ -10,8 +10,8 @@ use torland::util::{self, get_coler_by_id, get_coler_name_by_id, COLERS_CNT};
 
 const WINDOW_H: f64 = 400.0;
 const WINDOW_W: f64 = 400.0;
-const WORLD_H: usize = 20;
-const WORLD_W: usize = 20;
+const WORLD_H: usize = 200;
+const WORLD_W: usize = 200;
 
 const Y_STEP: f64 = WINDOW_H as f64 / WORLD_H as f64;
 const X_STEP: f64 = WINDOW_W as f64 / WORLD_W as f64;
@@ -28,9 +28,9 @@ fn main() {
     {
         "sun_max_lvl": 10,
         "mineral_max_lvl": 10,
-        "height": 20,
-        "width": 20,
-        "word_type": "Clustered",
+        "height": 200,
+        "width": 200,
+        "word_type": "Uniform",
         "cluster_cnt": 100,
         "rules": {
             "max_commands_per_cycle": 10,
@@ -46,7 +46,9 @@ fn main() {
             "mutation_ver": 0.01,
             "energy_per_sun_free_boost": 10,
             "energy_per_sun_bro_boost": 5,
-            "energy_per_sun_oth_boost": -2
+            "energy_per_sun_oth_boost": -2,
+            "ram_size": 100,
+            "stack_size": 100
         }
     }
     "#;
@@ -145,12 +147,7 @@ fn main() {
                     (cursor_pos[1] / Y_STEP) as usize,
                 );
                 world
-                    .spawn(
-                        pos.into(),
-                        "YWJTCDWCGAGEKQ2TUAMWBAANZDBAUC3CQWSSWLAIOEBY5QRJHBQY7UKEJVKOWK2O4UXLKZFZ2X773UMTTOH6U2Q74YWMZA3LUP5IV6UX5AK5C3MYQ3UCV4L5ZTPZCZYL32JHRZ5OK6IBCS53LYZ7SG3YL64N5AVXMBMHZ3SVZCSYKXCLSKK6FMQCVYRXRSYJXH6HTJYM25M4A5IZWEXTZE73J6VQC3RVMKP3ODHXLXAF2Z2YBTSNNQT5JK47Z7L3MS4J4AVOC54BXTPP6MG54H7DRX5L6SHLFU",
-                        // "MNSIAABREADAA",
-                        // "PWFUWCQAEAEAL3NXNJL5D7IP2ZQXUZECFZ2GAEHEJUTWNQYBFM6I2777HQLFSMSMIET625F2UI3BO"
-                    )
+                    .spawn(pos.into(), "5XB4CCIAAAEAEQDJRBUNYRRP6DQRA6TQBONLJXN7EADQ")
                     .ok();
             }
 
@@ -163,14 +160,17 @@ fn main() {
                     eprintln!("{}", i);
                     eprintln!(
                         "code: \n=========================\n{}=========================",
-                        botc::compiler::decompile(Vec::clone(&i.genom)).iter().fold(
-                            String::new(),
-                            |mut acc, cmd| {
-                                acc.push_str(format!("{}", cmd).as_str());
+                        botc::compiler::decompile(Vec::clone(&i.genom))
+                            .iter()
+                            .enumerate()
+                            .fold(String::new(), |mut acc, (ix, cmd)| {
+                                acc.push_str(
+                                    format!("{}{}", if ix == i.pc { " >" } else { "  " }, cmd)
+                                        .as_str(),
+                                );
                                 acc.push_str("\n");
                                 acc
-                            }
-                        )
+                            })
                     );
                 } else {
                     eprintln!("No bot");

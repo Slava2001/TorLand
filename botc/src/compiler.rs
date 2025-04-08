@@ -5,7 +5,7 @@ use std::collections::HashMap;
 use crate::{
     code::{
         command::{Command, CommandArg, CommandWord, Expr, COMMAND_REGEX},
-        Lable, LABLE_REGEX,
+        Label, LABEL_REGEX,
     },
     token::{FromTokenStream, Token, TokenStream},
 };
@@ -18,16 +18,16 @@ pub fn compile(code: String) -> Result<Vec<Command>> {
 }
 
 pub fn decompile(code: Vec<Command>) -> Vec<String> {
-    let mut req_lables: Vec<(usize, String)> = Vec::new();
+    let mut req_labels: Vec<(usize, String)> = Vec::new();
     let mut res: Vec<String> = code
         .into_iter()
         .map(|c| {
             let expr = TryInto::<Expr>::try_into(c).unwrap();
             let mut res: String = format!("{}", expr.cmd);
             for a in expr.args {
-                if let CommandArg::Lable(index) = a {
-                    res.push_str(format!(" lable_{a}").as_str());
-                    req_lables.push((index, format!("lable_{a}:")));
+                if let CommandArg::Label(index) = a {
+                    res.push_str(format!(" label_{a}").as_str());
+                    req_labels.push((index, format!("label_{a}:")));
                 } else if let CommandArg::Mem(addr) = a {
                     res.push_str(format!(" [{addr}]").as_str());
                 } else {
@@ -37,9 +37,9 @@ pub fn decompile(code: Vec<Command>) -> Vec<String> {
             res
         })
         .collect();
-    req_lables.sort_by(|(i1, _), (i2, _)| i2.cmp(i1));
-    req_lables.dedup_by(|(i1, _), (i2, _)| i1 == i2);
-    for (i, l) in req_lables {
+    req_labels.sort_by(|(i1, _), (i2, _)| i2.cmp(i1));
+    req_labels.dedup_by(|(i1, _), (i2, _)| i1 == i2);
+    for (i, l) in req_labels {
         res.insert(i, l);
     }
     res
@@ -49,7 +49,7 @@ const DIRECTIVE_REGEX: &str = "^#[a-zA-Z_]*$";
 const LINE_COMMENTS_START: &'static str = "//";
 
 struct Compiler {
-    exist_lables: HashMap<String, usize>,
+    exist_labels: HashMap<String, usize>,
     commands: Vec<Expr>,
     gen_len: isize,
     mem_size: isize,
@@ -58,7 +58,7 @@ struct Compiler {
 impl Compiler {
     fn new() -> Self {
         Self {
-            exist_lables: HashMap::new(),
+            exist_labels: HashMap::new(),
             commands: Vec::new(),
             gen_len: -1,
             mem_size: -1,
@@ -111,9 +111,9 @@ impl Compiler {
                 s if Regex::new(COMMAND_REGEX)?.is_match(s) => self
                     .parse_command(&mut toks)
                     .context("Failed to translate command")?,
-                s if Regex::new(LABLE_REGEX)?.is_match(s) => self
-                    .parse_lable(&mut toks)
-                    .context("Failed to translate lable")?,
+                s if Regex::new(LABEL_REGEX)?.is_match(s) => self
+                    .parse_label(&mut toks)
+                    .context("Failed to translate label")?,
                 _ => bail!("Unexpected token {}", token),
             };
         }
@@ -164,14 +164,14 @@ impl Compiler {
         // label resoling
         for c in self.commands.iter_mut() {
             for a in c.args.iter_mut() {
-                if let CommandArg::Lable(token_index) = a {
-                    let (lable_tok, _) = toks.get(*token_index as usize)?;
-                    let lable_pos = self
-                        .exist_lables
-                        .get(&lable_tok.orign_string.to_lowercase())
-                        .context(format!("Label {} not found", lable_tok))?;
-                    let lable_pos = *lable_pos % self.gen_len as usize;
-                    *a = CommandArg::Lable(lable_pos as Lable);
+                if let CommandArg::Label(token_index) = a {
+                    let (label_tok, _) = toks.get(*token_index as usize)?;
+                    let label_pos = self
+                        .exist_labels
+                        .get(&label_tok.orign_string.to_lowercase())
+                        .context(format!("Label {} not found", label_tok))?;
+                    let label_pos = *label_pos % self.gen_len as usize;
+                    *a = CommandArg::Label(label_pos as Label);
                 }
             }
         }
@@ -217,17 +217,17 @@ impl Compiler {
         Ok(())
     }
 
-    fn parse_lable(&mut self, toks: &mut TokenStream) -> Result<()> {
-        let (lable, _) = toks.next()?;
+    fn parse_label(&mut self, toks: &mut TokenStream) -> Result<()> {
+        let (label, _) = toks.next()?;
         ensure!(
-            self.exist_lables
+            self.exist_labels
                 .insert(
-                    lable.orign_string.as_str()[..lable.orign_string.len() - 1].to_lowercase(),
+                    label.orign_string.as_str()[..label.orign_string.len() - 1].to_lowercase(),
                     self.commands.len()
                 )
                 .is_none(),
             "label override {}",
-            lable
+            label
         );
         Ok(())
     }

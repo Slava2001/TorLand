@@ -11,7 +11,7 @@ use std::{
 pub mod bot;
 
 use crate::vec2::Vec2u;
-use bot::Bot;
+use bot::{Bot, BotCfg};
 
 type BotRef = Rc<RefCell<Bot>>;
 
@@ -38,6 +38,8 @@ pub struct Rules {
     pub energy_per_sun_free_boost: isize,
     pub energy_per_sun_bro_boost: isize,
     pub energy_per_sun_oth_boost: isize,
+    pub ram_size: usize,
+    pub stack_size: usize,
 }
 
 #[derive(Clone, Copy)]
@@ -229,18 +231,18 @@ impl World {
             };
             RefCell::borrow_mut(Rc::borrow(b)).update(&mut wa, &self.rules)?;
             let info = RefCell::borrow(Rc::borrow(b)).get_info();
-            self.info.max_age = self.info.max_age.max(info.age);
-            self.info.max_energy = self.info.max_age.max(info.energy);
-            self.info.min_age = self.info.min_age.min(info.age);
-            self.info.min_energy = self.info.min_energy.min(info.energy);
+            self.info.max_age = self.info.max_age.max(info.reg_ag as usize);
+            self.info.max_energy = self.info.max_age.max(info.reg_en as usize);
+            self.info.min_age = self.info.min_age.min(info.reg_ag as usize);
+            self.info.min_energy = self.info.min_energy.min(info.reg_en as usize);
         }
 
         for (_, b) in newborn.iter_mut() {
             let info = RefCell::borrow(Rc::borrow(b)).get_info();
-            self.info.max_age = self.info.max_age.max(info.age);
-            self.info.max_energy = self.info.max_age.max(info.energy);
-            self.info.min_age = self.info.min_age.min(info.age);
-            self.info.min_energy = self.info.min_energy.min(info.energy);
+            self.info.max_age = self.info.max_age.max(info.reg_ag as usize);
+            self.info.max_energy = self.info.max_age.max(info.reg_en as usize);
+            self.info.min_age = self.info.min_age.min(info.reg_ag as usize);
+            self.info.min_energy = self.info.min_energy.min(info.reg_en as usize);
         }
 
         self.bots.append(&mut newborn);
@@ -284,8 +286,14 @@ impl World {
             .get_mut(pos.x)
             .ok_or(())?;
         if let None = cell.bot {
-            let mut b = Bot::new(self.colony_cnt, 0, Rc::new(genom));
-            b.set_energy(self.rules.start_energy);
+            let b = Bot::new(BotCfg {
+                colony_id: self.colony_cnt,
+                genom_id: 0,
+                genom: Rc::new(genom),
+                ram_size: self.rules.ram_size,
+                stack_size: self.rules.stack_size,
+                energy: self.rules.start_energy,
+            });
             let b = Rc::new(RefCell::new(b));
             self.colony_cnt = self.colony_cnt + 1;
             self.map[pos.y][pos.x].bot = Some(b.clone());

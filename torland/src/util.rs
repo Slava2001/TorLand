@@ -13,7 +13,7 @@ struct Config {
     width: usize,
     word_type: WorldType,
     rules: Rules,
-    cluster_cnt: Option<usize>
+    cluster_cnt: Option<usize>,
 }
 #[derive(Deserialize, Serialize)]
 enum WorldType {
@@ -89,9 +89,13 @@ pub fn get_coler_by_id(id: usize) -> fn(&world::Info, &bot::Info) -> (u8, u8, u8
     match id % COLERS_CNT {
         0 => |_, b| get_color_by_id(b.colony_id),
         1 => |_, b| get_color_by_id(b.genom_id),
-        2 => |w, b| get_color_grad((b.age - w.min_age) as f32 / (w.max_age - w.min_age) as f32),
+        2 => |w, b| {
+            get_color_grad((b.reg_ag as usize - w.min_age) as f32 / (w.max_age - w.min_age) as f32)
+        },
         3 => |w, b| {
-            get_color_grad((b.energy - w.min_energy) as f32 / (w.max_energy - w.min_energy) as f32)
+            get_color_grad(
+                (b.reg_en as usize - w.min_energy) as f32 / (w.max_energy - w.min_energy) as f32,
+            )
         },
         4 => |_, _| (255, 0, 0),
         5 => |_, _| (0, 255, 0),

@@ -1,6 +1,6 @@
 use anyhow::{bail, Error};
 
-use super::{Dir, Lable, Mem, Reg, RwReg, Val};
+use super::{Dir, Label, Mem, Reg, RwReg, Val};
 use crate::{
     decl_tokens_enum,
     token::{FromTokenStream, TokenStream},
@@ -79,7 +79,7 @@ macro_rules! decl_command_enum {
         }
 
         impl Command {
-            pub fn rand<R: rand::Rng + ?Sized>(rng: &mut R, len: usize, max_val: isize) -> Command {
+            pub fn rand<R: rand::Rng + ?Sized>(rng: &mut R, len: usize, max_val: isize, max_mem: isize) -> Command {
                 let cmd: CommandWord = rng.gen();
                 Command::try_from(
                     match cmd {
@@ -90,9 +90,9 @@ macro_rules! decl_command_enum {
                                 $($(args.push({
                                     let arg = CommandArg::$args(rng.gen());
                                     match arg {
-                                        CommandArg::Lable(l) => CommandArg::Lable(l % len),
-                                        CommandArg::Val(v) => CommandArg::Val(v % max_val),
-                                        CommandArg::Mem(v) => CommandArg::Mem(v % max_val as u64),
+                                        CommandArg::Label(l) => CommandArg::Label(l % len),
+                                        CommandArg::Val(v) => CommandArg::Val(v % (2 * max_val) - max_val),
+                                        CommandArg::Mem(v) => CommandArg::Mem(v % max_mem as u64),
                                         arg => arg
                                     }
                                 });)*)*
@@ -138,33 +138,35 @@ macro_rules! Command_to_Expr_convertor {
 
 decl_command_enum! {
     PossibleArgs:
-        (Dir, Lable, Reg, RwReg, Val, Mem)
+        (Dir, Label, Reg, RwReg, Val, Mem)
     Commands:
         ("nop",    Nop                 ),
         ("mov",    Mov,    Dir         ),
         ("rot",    Rot,    Dir         ),
-        ("jmp",    Jmp,    Lable       ),
+        ("jmp",    Jmp,    Label       ),
         ("cmp",    Cmp,    Reg,   Reg  ),
-        ("jme",    Jme,    Lable       ),
-        ("jne",    Jne,    Lable       ),
-        ("jmg",    Jmg,    Lable       ),
-        ("jml",    Jml,    Lable       ),
-        ("jle",    Jle,    Lable       ),
-        ("jge",    Jge,    Lable       ),
-        ("jmb",    Jmb,    Lable       ),
-        ("jnb",    Jnb,    Lable       ),
-        ("jmc",    Jmc,    Lable       ),
-        ("jnc",    Jnc,    Lable       ),
-        ("jmf",    Jmf,    Lable       ),
-        ("jnf",    Jnf,    Lable       ),
+        ("jme",    Jme,    Label       ),
+        ("jne",    Jne,    Label       ),
+        ("jmg",    Jmg,    Label       ),
+        ("jml",    Jml,    Label       ),
+        ("jle",    Jle,    Label       ),
+        ("jge",    Jge,    Label       ),
+        ("jmo",    Jmo,    Label       ),
+        ("jno",    Jno,    Label       ),
+        ("jmb",    Jmb,    Label       ),
+        ("jnb",    Jnb,    Label       ),
+        ("jmc",    Jmc,    Label       ),
+        ("jnc",    Jnc,    Label       ),
+        ("jmf",    Jmf,    Label       ),
+        ("jnf",    Jnf,    Label       ),
         ("chk",    Chk,    Dir         ),
         ("cmpv",   Cmpv,   Reg,   Val  ),
-        ("split",  Split,  Dir,   Lable),
-        ("fork",   Fork,   Dir,   Lable),
+        ("split",  Split,  Dir,   Label),
+        ("fork",   Fork,   Dir,   Label),
         ("bite",   Bite,   Dir         ),
         ("eatsun", Eatsun              ),
         ("absorb", Absorb              ),
-        ("call",   Call,   Lable       ),
+        ("call",   Call,   Label       ),
         ("ret",    Ret                 ),
         ("ld",     Ld,     RwReg, Reg  ),
         ("ldv",    Ldv,    RwReg, Val  ),

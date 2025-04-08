@@ -27,7 +27,7 @@ macro_rules! decl_tokens_enum {
                 }
             }
         }
-        
+
         impl rand::prelude::Distribution<$enum_name> for rand::distributions::Standard {
             fn sample<R: rand::Rng + ?Sized>(&self, rng: &mut R) -> $enum_name {
                 const ENUM_VARIANT_COUNTL: usize = [
@@ -37,7 +37,7 @@ macro_rules! decl_tokens_enum {
                 num_traits::FromPrimitive::from_usize(i).unwrap()
             }
         }
-        
+
         impl std::default::Default for $enum_name {
             fn default() -> Self {
                 num_traits::FromPrimitive::from_usize(0).unwrap()
