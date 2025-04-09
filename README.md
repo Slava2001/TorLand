@@ -12,7 +12,7 @@ TorLand — проект, представляющий собой симуляц
 - botc — компилятор языка [botlang](./botc/bot.md). Он позволяет компилировать и декомпилировать геном ботов.
 - torland — мир ботов. Он позволяет выполнять симуляцию их эволюции.
 
-Оба компонента доступны онлайн ([botc](https://wdrop.ru/TorLand/compiler/) и [torland](https://wdrop.ru/TorLand/simulation/)), а также существует возможность собрать офлайн версию:
+Оба компонента доступны онлайн ([botc](https://wdrop.ru/projects/TorLand/compiler/) и [torland](https://wdrop.ru/projects/TorLand/simulation/)), а также существует возможность собрать офлайн версию:
 
 ```
 git clone https://github.com/Slava2001/TorLand.git
